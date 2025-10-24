@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private Canvas mainCanvas; // UI表示キャンバス.
+    [SerializeField]
+    private Transform buttonContainer; // コマンドボタン整列用オブジェクト.
 
     [SerializeField]
     private Text remainEnemyCountText, // 残りの敵の数を表示するテキスト.
@@ -68,27 +70,27 @@ public class UIManager : MonoBehaviour
 
     public void CreateCommandButton()
     {
-        normalAttack = Instantiate(buttonPrefab);
-        normalAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(normalAttack);
+        DeleteCommandButton();
 
-        normalAttack.transform.position = normalAttack.transform.position + new Vector3(100, 100, 0);
-        normalAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnNormalAttackSelected());
+        var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
+        {
+            ("通常攻撃", () => commandController.OnNormalAttackSelected()),
+            ("スキル攻撃", () => commandController.OnSkillAttackSelected()),
+            ("トラップ設置", () => commandController.OnSetTrapSelected())
+        };
 
-        skillAttack = Instantiate(buttonPrefab);
-        skillAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(skillAttack);
+        foreach (var (label, onClick) in buttonConfigs)
+        {
+            var buttonObj = Instantiate(buttonPrefab, buttonContainer);
+            var textComponent = buttonObj.GetComponentInChildren<Text>();
+            if (textComponent != null)
+                textComponent.text = label;
 
-        skillAttack.transform.position = skillAttack.transform.position + new Vector3(300, 100, 0);
-        skillAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnSkillAttackSelected());
-
-        trapAttack = Instantiate(buttonPrefab);
-        trapAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(trapAttack);
-
-        trapAttack.transform.position = trapAttack.transform.position + new Vector3(700, 100, 0);
-        trapAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnSetTrapSelected());
+            buttonObj.GetComponent<Button>().onClick.AddListener(onClick);
+            buttons.Add(buttonObj);
+        }
     }
+
 
     public void DeleteCommandButton()
     {
