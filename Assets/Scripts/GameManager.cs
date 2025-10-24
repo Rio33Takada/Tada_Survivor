@@ -2,56 +2,75 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Managers")]
     public UIManager uiManager;
+    public GridManager gridManager;
+    public TurnController turnController;
 
-    private TurnController turnController;
+    [Header("Player")]
+    public PlayerMove player; // PlayerMoveをInspectorで設定
 
-    public int AttackPoint { get; private set; } // 攻撃ポイント.
+    [Header("Game Stats")]
+    public int AttackPoint { get; private set; } // 攻撃ポイント
+    public int MovePoint { get; private set; }   // 移動ポイント
+    public int WaveCount { get; private set; }   // 現在のウェーブ数
 
-    public int MovePoint { get; private set; } // 移動ポイント.
+    private void Awake()
+    {
+        AwakeGame();
+    }
 
-    public int WaveCount { get; private set; } // 現在のウェーブ数.
-
-    void Start()
+    private void Start()
     {
         StartGame();
     }
 
-    void Update()
+    private void AwakeGame()
     {
-        
+        // グリッド生成
+        if (gridManager != null)
+            gridManager.GenerateGrid();
+        else
+            Debug.LogError("GridManager が設定されていません。");
     }
 
     private void StartGame()
     {
-        // クラス生成・初期化.
-        ClassInitializer();
-
-        // 変数初期化.
         InitializeVariables();
 
-        // UI初期化.
-        uiManager.InitializeUI(this);
+        if (uiManager != null)
+            uiManager.InitializeUI(this);
 
-        // フィールド生成.
+        if (turnController != null)
+            turnController.Initialize(this);
 
-        // プレイヤーターン開始.
+        if (player != null)
+        {
+            player.gridManager = gridManager;
+            player.turnController = turnController; // ← 追加！
+        }
+
         turnController.TurnChange();
     }
 
-    private void ClassInitializer()
-    {
-        turnController = new TurnController();
-    }
 
     private void InitializeVariables()
     {
         AttackPoint = 3;
+        MovePoint = 5;
         WaveCount = 0;
     }
 
-    private void SpawnEnemy(int x, int y)
+    public void NextWave()
     {
-        
+        WaveCount++;
+        if (uiManager != null)
+            uiManager.UpdateWave(WaveCount);
+    }
+
+    public void SpawnEnemy(int x, int y)
+    {
+        // 敵生成処理
+        Debug.Log($"敵を生成: ({x}, {y})");
     }
 }
