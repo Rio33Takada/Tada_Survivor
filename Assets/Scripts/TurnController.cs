@@ -4,7 +4,7 @@ public class TurnController
 
     public TurnController()
     {
-        IsPlayerTurn = true;
+        IsPlayerTurn = false;
     }
 
     public void TurnChange()
