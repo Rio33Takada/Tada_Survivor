@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f458a8e3739e2294face71ddcc01bec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
   mainCanvas: {fileID: 2097453191}
   remainEnemyCountText: {fileID: 2030904320}
   waveCountText: {fileID: 604562950}

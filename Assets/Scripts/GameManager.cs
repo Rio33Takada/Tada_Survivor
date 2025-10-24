@@ -4,6 +4,8 @@ public class GameManager : MonoBehaviour
 {
     public UIManager uiManager;
 
+    private TurnController turnController;
+
     public int AttackPoint { get; private set; } // 攻撃ポイント.
 
     public int MovePoint { get; private set; } // 移動ポイント.
@@ -22,6 +24,9 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        // クラス生成・初期化.
+        ClassInitializer();
+
         // 変数初期化.
         InitializeVariables();
 
@@ -31,11 +36,22 @@ public class GameManager : MonoBehaviour
         // フィールド生成.
 
         // プレイヤーターン開始.
+        turnController.TurnChange();
+    }
+
+    private void ClassInitializer()
+    {
+        turnController = new TurnController();
     }
 
     private void InitializeVariables()
     {
         AttackPoint = 3;
         WaveCount = 0;
+    }
+
+    private void SpawnEnemy(int x, int y)
+    {
+        
     }
 }
