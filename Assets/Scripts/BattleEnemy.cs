@@ -5,11 +5,11 @@ namespace takada
 
         public int hp { get; private set; }
 
-        public bool isAlive => hp > 0;
+        public bool IsAlive => hp > 0;
         public void TakeDamage(int amount)
         {
             hp -= amount;
-            if (!isAlive)
+            if (!IsAlive)
             {
                 Death();
             }
