@@ -115,4 +115,8 @@ public class UIManager : MonoBehaviour
     {
         waveCountText.text = count.ToString() + "ウェーブ目";
     }
+    public void UpdateWave(int wave)
+    {
+        SetWaveCountText(wave);
+    }
 }
