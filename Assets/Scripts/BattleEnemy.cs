@@ -1,14 +1,31 @@
+using UnityEngine;
+
+public enum EnemyType
+{
+    knight,
+    archer,
+    bomber,
+}
+
 namespace takada
 {
-    public class BattleEnemy
+    public abstract class BattleEnemy
     {
+        public virtual int MaxHp { get; }
+        public int Hp { get; private set; }
 
-        public int hp { get; private set; }
+        public Vector2Int gridPosition;
 
-        public bool IsAlive => hp > 0;
+        public bool IsAlive => Hp > 0;
+
+        public BattleEnemy()
+        {
+            Hp = MaxHp;
+        }
+
         public void TakeDamage(int amount)
         {
-            hp -= amount;
+            Hp -= amount;
             if (!IsAlive)
             {
                 Death();
@@ -18,6 +35,21 @@ namespace takada
         public void Death()
         {
 
+        }
+
+        public virtual void Move(Vector2Int playerPos)
+        {
+
+        }
+
+        public virtual void Attack()
+        {
+
+        }
+
+        public virtual bool SearchPlayer()
+        {
+            return false;
         }
     }
 }

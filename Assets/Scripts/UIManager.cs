@@ -22,8 +22,11 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private GameObject attackPointIconsPrefab; // 攻撃ポイント表示オブジェクト(プレハブ).
-
     private GameObject attackPointIcons; // 攻撃ポイント表示オブジェクト(インスタンス).
+
+    [SerializeField]
+    private GameObject movePointCountDownPrefab; // 移動ポイントカウントダウン(プレハブ).
+    private GameObject movePointCountDown; // 移動ポイントカウントダウン(インスタンス).
 
     void Start()
     {
