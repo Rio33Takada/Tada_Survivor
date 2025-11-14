@@ -55,13 +55,26 @@ namespace takada
         public virtual int MaxHp { get; }
         public int Hp { get; private set; }
 
-        public Vector2Int gridPosition;
+        public Vector2Int GridPosition { get; private set; }
 
         public bool IsAlive => Hp > 0;
+
+        public Vector2Int[] dirs =
+        {
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1)
+        };
 
         public BattleEnemy()
         {
             Hp = MaxHp;
+        }
+
+        public void SetPosition(Vector2Int pos)
+        {
+            GridPosition = pos;
         }
 
         public void TakeDamage(int amount)
@@ -83,25 +96,49 @@ namespace takada
             GridManager grid = gridManager;
             Pathfinding pathfinder = new Pathfinding(grid);
 
-            List<Vector2Int> path = pathfinder.FindPath(gridPosition, playerPos);
+            // --- ① ゴール候補（プレイヤー周囲4マス）を取得 ---
+            List<Vector2Int> goals = new List<Vector2Int>();
 
-            if (path == null || path.Count < 2) return;
-
-            // path[0] = 今の位置, path[1] = 次の位置
-            Vector2Int nextPos = path[1];
-
-            gridPosition = nextPos;
-
-            // 実際のワールド座標へ移動
-            Tile tile = grid.GetTileAt(nextPos);
-            if (tile != null)
+            foreach (var d in dirs)
             {
-                transform.position = tile.transform.position;
+                Vector2Int pos = playerPos + d;
+                goals.Add(pos);
+                if (GridPosition == new Vector2Int(pos.x, pos.y)) return;
+            }
+
+            // --- ② 各ゴールに対して A* を実行して最短経路を選ぶ ---
+            List<Vector2Int> bestPath = null;
+            int bestCost = int.MaxValue;
+
+            foreach (var g in goals)
+            {
+                List<Vector2Int> path = pathfinder.FindPath(GridPosition, g);
+
+                if (path != null && path.Count < bestCost)
+                {
+                    bestCost = path.Count;
+                    bestPath = path;
+                }
+            }
+
+            // --- ③ 経路が見つからない ---
+            if (bestPath == null || bestPath.Count < 2) return;
+
+
+            // --- ④ 最短経路に基づいて移動 ---
+            // bestPath[0] = 現在地, bestPath[1] = 次に進む位置
+            Vector2Int nextPos = bestPath[1];
+            SetPosition(nextPos);
+
+            // ワールド座標へ反映
+            Tile nextTile = grid.GetTileAt(nextPos);
+            if (nextTile != null)
+            {
+                transform.position = nextTile.transform.position;
             }
         }
 
-
-        public virtual void Attack()
+        public virtual void Attack(Vector2Int playerPos)
         {
 
         }

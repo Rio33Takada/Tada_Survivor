@@ -14,4 +14,13 @@ public class Knight : BattleEnemy
     {
         base.Move(playerPos, grid);
     }
+
+    public override void Attack(Vector2Int playerPos)
+    {
+        foreach (var d in dirs)
+        {
+            var pos = GridPosition + d;
+            if (pos == playerPos) ; // プレイヤーにダメージ.
+        }
+    }
 }

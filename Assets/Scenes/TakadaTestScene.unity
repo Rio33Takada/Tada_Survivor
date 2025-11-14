@@ -154,6 +154,7 @@ MonoBehaviour:
   remainEnemyCountText: {fileID: 2030904320}
   waveCountText: {fileID: 604562950}
   attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
+  movePointCountDownPrefab: {fileID: 0}
 --- !u!4 &197780718
 Transform:
   m_ObjectHideFlags: 0
@@ -664,6 +665,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 197780717}
+  gridManager: {fileID: 0}
+  turnController: {fileID: 0}
+  player: {fileID: 0}
 --- !u!4 &1677311832
 Transform:
   m_ObjectHideFlags: 0
