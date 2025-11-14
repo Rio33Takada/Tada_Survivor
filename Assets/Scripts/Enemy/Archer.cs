@@ -1,11 +1,11 @@
 using takada;
 using UnityEngine;
 
-public class Knight : BattleEnemy
+public class Archer : BattleEnemy
 {
     public override int MaxHp => 1;
 
-    public Knight() : base()
+    public Archer() : base()
     {
 
     }

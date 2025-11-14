@@ -3,30 +3,35 @@ using UnityEngine;
 
 public class BattleEnemyFactory
 {
-    private BattleEnemyController enemyController;
+    private readonly EnemyPrefabHolder prefabHolder;
+    private readonly BattleEnemyController enemyController;
 
-    public BattleEnemyFactory(BattleEnemyController enemyController)
+    public BattleEnemyFactory(
+        EnemyPrefabHolder prefabHolder,
+        BattleEnemyController enemyController)
     {
+        this.prefabHolder = prefabHolder;
         this.enemyController = enemyController;
     }
 
-    public void CreateBattleEnemy(EnemyType type)
+    public void CreateBattleEnemy(EnemyType type, Vector2Int pos)
     {
-        BattleEnemy enemy = null;
-
-        switch (type)
+        var prefab = prefabHolder.GetPrefab(type);
+        if (prefab == null)
         {
-            case EnemyType.knight:
-                enemy = new Knight();
-                break;
-            default:
-                Debug.LogError("存在しないEnemyTypeです");
-                break;
+            Debug.LogError($"Prefab が見つかりません: {type}");
+            return;
         }
 
-        if (enemy != null)
+        var go = GameObject.Instantiate(prefab);
+        var enemy = go.GetComponent<BattleEnemy>();
+
+        if (enemy == null)
         {
-            enemyController.AddEnemy(enemy);
+            Debug.LogError($"{type} のPrefab に BattleEnemy がアタッチされていません");
+            return;
         }
+
+        enemyController.AddEnemy(enemy);
     }
 }

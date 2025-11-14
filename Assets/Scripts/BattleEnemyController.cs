@@ -4,12 +4,14 @@ using System.Collections.Generic;
 public class BattleEnemyController
 {
     private BattleEnemyFactory enemyFactory;
+    private GridManager gridManager;
 
     public List<BattleEnemy> enemyList { get; private set; }
 
-    public BattleEnemyController()
+    public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder)
     {
-        enemyFactory = new BattleEnemyFactory(this);
+        enemyFactory = new BattleEnemyFactory(holder, this);
+        gridManager = grid;
     }
 
     public void AddEnemy(BattleEnemy enemy)
@@ -21,7 +23,7 @@ public class BattleEnemyController
     {
         foreach (BattleEnemy enemy in enemyList)
         {
-            enemy.Move(playerPos);
+            enemy.Move(playerPos, gridManager);
         }
     }
 }
