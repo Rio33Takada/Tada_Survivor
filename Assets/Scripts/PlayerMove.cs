@@ -13,6 +13,7 @@ public class PlayerMove : MonoBehaviour
     private Vector2Int gridPos;
     private Vector3 targetPos;
     private bool isMoving = false;
+    private bool canMove = false;
 
     void Start()
     {
@@ -34,28 +35,79 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        // 移動中なら補間
         if (isMoving)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
 
-            // 到着したら停止
-            if (Vector3.Distance(transform.position, targetPos) < 0.001f)
+            if (Vector3.Distance(transform.position, targetPos) < 0.01f)
             {
                 isMoving = false;
+                canMove = false;
+                ClearMovableTiles(); // ★ 色を戻す
                 Debug.Log("プレイヤーの移動終了");
-
-                // ターンを敵に渡す
                 turnController?.EndPlayerTurn();
             }
+
         }
 
+
         // プレイヤーターン中のみクリック操作を受け付ける
-        if (!isMoving && turnController != null && turnController.IsPlayerTurn)
+        if (!isMoving && canMove && turnController != null && turnController.IsPlayerTurn)
         {
             if (Input.GetMouseButtonDown(0))
                 TryMoveToMouseClick();
         }
+
+    }
+
+    void ShowMovableTiles()
+    {
+        ClearMovableTiles();
+
+        Vector2Int[] directions =
+        {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
+
+        foreach (var dir in directions)
+        {
+            Vector2Int checkPos = gridPos + dir;
+            Tile tile = gridManager.GetTileAt(checkPos);
+
+            if (tile != null && tile.walkable)
+            {
+                tile.SetMovableColor(true);
+            }
+        }
+    }
+
+    void ClearMovableTiles()
+    {
+        Tile[,] allTiles = gridManager.GetAllTiles();
+
+        for (int x = 0; x < allTiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < allTiles.GetLength(1); y++)
+            {
+                allTiles[x, y].SetMovableColor(false);
+            }
+        }
+    }
+
+    public void CancelMove()
+    {
+        canMove = false;
+        isMoving = false;
+        ClearMovableTiles(); // 色を元に戻す
+    }
+
+    public void EnableMoveOnce()
+    {
+        canMove = true;
+        ShowMovableTiles();
     }
 
     void TryMoveToMouseClick()
@@ -70,7 +122,8 @@ public class PlayerMove : MonoBehaviour
             Vector2Int diff = targetGridPos - gridPos;
 
             // 上下左右の1マスのみ移動可
-            if ((Mathf.Abs(diff.x) == 1 && diff.y == 0) || (Mathf.Abs(diff.y) == 1 && diff.x == 0))
+            if ((Mathf.Abs(diff.x) == 1 && diff.y == 0) ||
+                (Mathf.Abs(diff.y) == 1 && diff.x == 0))
             {
                 gridPos = targetGridPos;
                 targetPos = clickedTile.transform.position + new Vector3(0, yOffset, 0);
@@ -79,4 +132,5 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
+
 }

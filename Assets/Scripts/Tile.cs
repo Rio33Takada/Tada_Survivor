@@ -7,4 +7,18 @@ public class Tile : MonoBehaviour
 
     // —áFŒã‚Å“G‚â”š’e‚ğ’u‚­‚Æ‚«‚Ég‚¤
     public GameObject occupant;
+    private Renderer rend;
+    private Color defaultColor;
+
+    void Awake()
+    {
+        rend = GetComponent<Renderer>();
+        defaultColor = rend.material.color;
+    }
+
+    public void SetMovableColor(bool movable)
+    {
+        rend.material.color = movable ? Color.cyan : defaultColor;
+    }
+
 }

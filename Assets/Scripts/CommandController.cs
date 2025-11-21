@@ -7,18 +7,18 @@ public class CommandController
 
     }
 
-    public void OnNormalAttackSelected()
+    public void OnMoveSelected()
     {
-        Debug.Log("NormalAttackSelected");
+        Debug.Log("MoveSelected");
     }
 
-    public void OnSkillAttackSelected()
+    public void OnAttackSelected()
     {
-        Debug.Log("SkillAttackSelected");
+        Debug.Log("AttackSelected");
     }
 
     public void OnSetTrapSelected()
     {
-        Debug.Log("SetTrapSelected");
+        Debug.Log("TrapSelected");
     }
 }

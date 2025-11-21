@@ -55,6 +55,12 @@ public class GridManager : MonoBehaviour
         Debug.Log($"Grid生成完了: {width}x{height}");
     }
 
+    public Tile[,] GetAllTiles()
+    {
+        return grid;
+    }
+
+
     /// <summary>
     /// 指定した座標のタイルを返す（範囲外ならnull）
     /// </summary>

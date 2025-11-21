@@ -4,33 +4,44 @@ using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField]
+    private PlayerMove playerMove;
+
+    [SerializeField]
+    private TurnController turnController;   // ★ 追加：ターン管理
+
     private CommandController commandController;
-
-    private List<GameObject> buttons = new List<GameObject>(); // ボタンリスト.
-
-    public GameObject buttonPrefab; // ボタン(プレハブ).
-    private GameObject normalAttack, skillAttack, trapAttack; // ボタンGameObject.
+    private GameObject normalMove, normalAttack, trapAttack;
 
     [SerializeField]
-    private Canvas mainCanvas; // UI表示キャンバス.
+    private Canvas mainCanvas;
 
     [SerializeField]
-    private Text remainEnemyCountText, // 残りの敵の数を表示するテキスト.
-                 waveCountText;       // 現在のウェーブ数を表示するテキスト.
+    private Text remainEnemyCountText,
+                 waveCountText;
 
     [SerializeField]
-    private GameObject attackPointIconsPrefab; // 攻撃ポイント表示オブジェクト(プレハブ).
+    private GameObject attackPointIconsPrefab;
+    private GameObject attackPointIcons;
 
-    private GameObject attackPointIcons; // 攻撃ポイント表示オブジェクト(インスタンス).
+    public GameObject buttonPrefab;
+    private List<GameObject> buttons = new List<GameObject>();
 
-    void Start()
-    {
-        
-    }
+    [Header("UI Positions")]
+    [SerializeField] private Vector2 attackPointIconsPos;
+
+    [Header("Command Button Positions")]
+    [SerializeField] private Vector2 MoveButtonPos;
+    [SerializeField] private Vector2 AttackButtonPos;
+    [SerializeField] private Vector2 trapButtonPos;
 
     void Update()
     {
-        
+        // ターンによってボタン制御
+        if (turnController != null)
+        {
+            SetButtonsInteractable(turnController.IsPlayerTurn);
+        }
     }
 
     private void ClassInitializer()
@@ -38,29 +49,19 @@ public class UIManager : MonoBehaviour
         commandController = new CommandController();
     }
 
-    /// <summary>
-    /// UI初期化
-    /// </summary>
     public void InitializeUI(GameManager gm)
     {
-        // クラス初期化.
         ClassInitializer();
 
-        // 攻撃ポイント表示オブジェクト生成.
         if (attackPointIcons != null)
-        {
             Destroy(attackPointIcons);
-        }
-        attackPointIcons = Instantiate(attackPointIconsPrefab);
-        attackPointIcons.transform.SetParent(mainCanvas.transform);
 
-        // 攻撃ポイント表示更新.
+        attackPointIcons = Instantiate(attackPointIconsPrefab, mainCanvas.transform);
+
+        RectTransform apRect = attackPointIcons.GetComponent<RectTransform>();
+        apRect.anchoredPosition = attackPointIconsPos;
+
         SetSkillPoint(gm.AttackPoint);
-
-        // 残り敵数表示更新.
-
-
-        // 現在のウェーブ数表示更新.
         SetWaveCountText(gm.WaveCount);
 
         CreateCommandButton();
@@ -68,34 +69,66 @@ public class UIManager : MonoBehaviour
 
     public void CreateCommandButton()
     {
-        normalAttack = Instantiate(buttonPrefab);
-        normalAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(normalAttack);
+        normalMove = CreateButton(MoveButtonPos, () =>
+        {
+            if (!turnController.IsPlayerTurn) return;
+            playerMove.EnableMoveOnce();
+            commandController.OnMoveSelected();
+        });
 
-        normalAttack.transform.position = normalAttack.transform.position + new Vector3(100, 100, 0);
-        normalAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnNormalAttackSelected());
+        normalAttack = CreateButton(AttackButtonPos, () =>
+        {
+            if (!turnController.IsPlayerTurn) return;
+            playerMove.CancelMove();
+            commandController.OnAttackSelected();
+        });
 
-        skillAttack = Instantiate(buttonPrefab);
-        skillAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(skillAttack);
+        trapAttack = CreateButton(trapButtonPos, () =>
+        {
+            if (!turnController.IsPlayerTurn) return;
+            playerMove.CancelMove();
+            commandController.OnSetTrapSelected();
+        });
+    }
 
-        skillAttack.transform.position = skillAttack.transform.position + new Vector3(300, 100, 0);
-        skillAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnSkillAttackSelected());
+    public void SetButtonsInteractable(bool canUse)
+    {
+        SetButtonState(normalMove.GetComponent<Button>(), canUse);
+        SetButtonState(normalAttack.GetComponent<Button>(), canUse);
+        SetButtonState(trapAttack.GetComponent<Button>(), canUse);
+    }
 
-        trapAttack = Instantiate(buttonPrefab);
-        trapAttack.transform.SetParent(mainCanvas.transform);
-        buttons.Add(trapAttack);
+    // ★ 敵ターンは完全透明
+    private void SetButtonState(Button button, bool canUse)
+    {
+        button.interactable = canUse;
 
-        trapAttack.transform.position = trapAttack.transform.position + new Vector3(700, 100, 0);
-        trapAttack.GetComponent<Button>().onClick.AddListener(() => commandController.OnSetTrapSelected());
+        Image img = button.GetComponent<Image>();
+        Color c = img.color;
+
+        c.a = canUse ? 1f : 0f;   // ← 敵ターンは消える
+
+        img.color = c;
+    }
+
+    private GameObject CreateButton(Vector2 position, UnityEngine.Events.UnityAction action)
+    {
+        GameObject btn = Instantiate(buttonPrefab, mainCanvas.transform);
+        buttons.Add(btn);
+
+        RectTransform rect = btn.GetComponent<RectTransform>();
+        rect.anchoredPosition = position;
+
+        btn.GetComponent<Button>().onClick.AddListener(action);
+
+        return btn;
     }
 
     public void DeleteCommandButton()
     {
         foreach (var button in buttons)
-        {
             Destroy(button);
-        }
+
         buttons.Clear();
     }
 
@@ -106,13 +139,14 @@ public class UIManager : MonoBehaviour
 
     public void SetRemainEnemyCountText(int count)
     {
-        remainEnemyCountText.text = "残り" + count.ToString() + "体";
+        remainEnemyCountText.text = "残り" + count + "体";
     }
 
     public void SetWaveCountText(int count)
     {
-        waveCountText.text = count.ToString() + "ウェーブ目";
+        waveCountText.text = count + "ウェーブ目";
     }
+
     public void UpdateWave(int wave)
     {
         SetWaveCountText(wave);

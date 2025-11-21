@@ -4,6 +4,7 @@ public class TurnController : MonoBehaviour
 {
     public bool IsPlayerTurn { get; private set; } = true;
     private GameManager gameManager;
+    public UIManager uiManager;
 
     public void Initialize(GameManager manager)
     {
@@ -15,10 +16,16 @@ public class TurnController : MonoBehaviour
     {
         if (IsPlayerTurn)
         {
+            // 敵ターンへ
+            IsPlayerTurn = false;
+            uiManager.SetButtonsInteractable(false); // ★ ボタン無効
             EnemyTurn();
         }
         else
         {
+            // プレイヤーターンへ
+            IsPlayerTurn = true;
+            uiManager.SetButtonsInteractable(true); // ★ ボタン有効
             PlayerTurn();
         }
     }
