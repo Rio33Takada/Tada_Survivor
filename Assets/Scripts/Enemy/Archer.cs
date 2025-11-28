@@ -6,7 +6,7 @@ public class Archer : BattleEnemy
 {
     public override int MaxHp => 1;
 
-    private new Vector2Int[] dirs =
+    protected override Vector2Int[] Dirs { get; } =
     {
         new Vector2Int(2, 1),
         new Vector2Int(2, 0),
@@ -22,11 +22,6 @@ public class Archer : BattleEnemy
         new Vector2Int(1, 2),
     };
 
-    public Archer() : base()
-    {
-
-    }
-
     public override void Move(Vector2Int playerPos, GridManager gridManager)
     {
         GridManager grid = gridManager;
@@ -35,7 +30,7 @@ public class Archer : BattleEnemy
         // --- ① ゴール候補（プレイヤー周囲4マス）を取得 ---
         List<Vector2Int> goals = new List<Vector2Int>();
 
-        foreach (var d in dirs)
+        foreach (var d in Dirs)
         {
             Vector2Int pos = playerPos + d;
             goals.Add(pos);
@@ -76,7 +71,7 @@ public class Archer : BattleEnemy
 
     public override void Attack(Vector2Int playerPos)
     {
-        foreach (var d in dirs)
+        foreach (var d in Dirs)
         {
             var pos = GridPosition + d;
             if (pos == playerPos) ; // プレイヤーにダメージ.

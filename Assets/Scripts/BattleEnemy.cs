@@ -59,15 +59,15 @@ namespace takada
 
         public bool IsAlive => Hp > 0;
 
-        public Vector2Int[] dirs =
+        protected virtual Vector2Int[] Dirs { get; } =
         {
-            new Vector2Int(1, 0),
-            new Vector2Int(-1, 0),
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1)
+            new Vector2Int(1,0),
+            new Vector2Int(-1,0),
+            new Vector2Int(0,1),
+            new Vector2Int(0,-1)
         };
 
-        public BattleEnemy()
+        void Awake()
         {
             Hp = MaxHp;
         }
@@ -99,7 +99,7 @@ namespace takada
             // --- ① ゴール候補（プレイヤー周囲4マス）を取得 ---
             List<Vector2Int> goals = new List<Vector2Int>();
 
-            foreach (var d in dirs)
+            foreach (var d in Dirs)
             {
                 Vector2Int pos = playerPos + d;
                 goals.Add(pos);

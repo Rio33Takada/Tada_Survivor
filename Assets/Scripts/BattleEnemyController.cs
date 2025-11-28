@@ -6,7 +6,7 @@ public class BattleEnemyController
     private BattleEnemyFactory enemyFactory;
     private GridManager gridManager;
 
-    public List<BattleEnemy> enemyList { get; private set; }
+    public List<BattleEnemy> EnemyList { get; private set; }
 
     public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder)
     {
@@ -16,14 +16,22 @@ public class BattleEnemyController
 
     public void AddEnemy(BattleEnemy enemy)
     {
-        enemyList.Add(enemy);
+        EnemyList.Add(enemy);
     }
 
     public void MoveEnemy(Vector2Int playerPos)
     {
-        foreach (BattleEnemy enemy in enemyList)
+        foreach (BattleEnemy enemy in EnemyList)
         {
             enemy.Move(playerPos, gridManager);
+        }
+    }
+
+    public void AttackEnemy(Vector2Int playerPos)
+    {
+        foreach (BattleEnemy enemy in EnemyList)
+        {
+            enemy.Attack(playerPos);
         }
     }
 }
