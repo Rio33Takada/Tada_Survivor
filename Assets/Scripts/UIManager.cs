@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     private PlayerMove playerMove;
 
     [SerializeField]
-    private TurnController turnController;   // ★ 追加：ターン管理
+    private TurnController turnController;
 
     private CommandController commandController;
     private GameObject normalMove, normalAttack, trapAttack;
@@ -102,14 +102,14 @@ public class UIManager : MonoBehaviour
             commandController.OnSetTrapSelected();
         });
 
-        // ★ 修正: buttonContainer用のボタンを作成（元のコードから移動）
+
         CreateContainerButtons();
     }
 
-    // ★ 新規追加: buttonContainer用のボタンを別メソッドに分離
+
     private void CreateContainerButtons()
     {
-        // ★ 修正: 明示的にUnityActionにキャスト
+
         var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
         {
             ("通常攻撃", (UnityEngine.Events.UnityAction)(() => commandController.OnMoveSelected())),
