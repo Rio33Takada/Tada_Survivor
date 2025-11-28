@@ -15,6 +15,9 @@ public class PlayerMove : MonoBehaviour
     private bool isMoving = false;
     private bool canMove = false;
 
+    private float lastClickTime = 0f;
+    private float doubleClickThreshold = 0.3f; // ダブルクリック判定時間
+
     void Start()
     {
         gridPos = new Vector2Int(0, 0);
@@ -57,6 +60,21 @@ public class PlayerMove : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
                 TryMoveToMouseClick();
         }
+
+        // プレイヤーターン中のみ、プレイヤーをダブルクリックで移動範囲表示
+        if (turnController != null && turnController.IsPlayerTurn && Input.GetMouseButtonDown(0))
+        {
+            if (IsPlayerClicked())
+            {
+                if (Time.time - lastClickTime < doubleClickThreshold)
+                {
+                    EnableMoveOnce(); // ★ 移動可能範囲を表示
+                }
+
+                lastClickTime = Time.time;
+            }
+        }
+
 
     }
 
@@ -102,6 +120,17 @@ public class PlayerMove : MonoBehaviour
         canMove = false;
         isMoving = false;
         ClearMovableTiles(); // 色を元に戻す
+    }
+
+    bool IsPlayerClicked()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.gameObject == this.gameObject)
+                return true;
+        }
+        return false;
     }
 
     public void EnableMoveOnce()

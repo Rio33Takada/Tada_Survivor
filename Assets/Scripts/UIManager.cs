@@ -31,9 +31,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Vector2 attackPointIconsPos;
 
     [Header("Command Button Positions")]
-    [SerializeField] private Vector2 MoveButtonPos;
     [SerializeField] private Vector2 AttackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
+    [SerializeField] private Vector2 EndButtonPos;
 
     void Update()
     {
@@ -69,11 +69,12 @@ public class UIManager : MonoBehaviour
 
     public void CreateCommandButton()
     {
-        normalMove = CreateButton(MoveButtonPos, () =>
+        normalMove = CreateButton(EndButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
-            playerMove.EnableMoveOnce();
-            commandController.OnMoveSelected();
+
+            playerMove.CancelMove();          // ˆÚ“®ó‘Ô‚ð‰ðœ
+            turnController.EndPlayerTurn();   // š ƒ^[ƒ“I—¹
         });
 
         normalAttack = CreateButton(AttackButtonPos, () =>
