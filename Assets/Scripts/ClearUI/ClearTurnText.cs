@@ -36,7 +36,7 @@ public class ClearTurnText : MonoBehaviour
 
         c.a = targetAlpha;
         numberText.color = c;
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.6f);
         StartCoroutine(DisplayRandomNumbers());
     }
 
