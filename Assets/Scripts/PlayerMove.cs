@@ -10,7 +10,7 @@ public class PlayerMove : MonoBehaviour
     public float moveSpeed = 2f;
     public float yOffset = 0.5f;
 
-    private Vector2Int gridPos;
+    public Vector2Int gridPos;
     private Vector3 targetPos;
     private bool isMoving = false;
     private bool canMove = false;
