@@ -14,20 +14,13 @@ public class UIManager : MonoBehaviour
     private GameObject normalMove, normalAttack, trapAttack;
 
     [SerializeField]
-<<<<<<< HEAD
     private Canvas mainCanvas;
-=======
-    private Canvas mainCanvas; // UI表示キャンバス.
-    [SerializeField]
-    private Transform buttonContainer; // コマンドボタン整列用オブジェクト.
->>>>>>> origin/feature/takada
 
     [SerializeField]
     private Text remainEnemyCountText,
                  waveCountText;
 
     [SerializeField]
-<<<<<<< HEAD
     private GameObject attackPointIconsPrefab;
     private GameObject attackPointIcons;
 
@@ -41,19 +34,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Vector2 AttackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
     [SerializeField] private Vector2 EndButtonPos;
-=======
-    private GameObject attackPointIconsPrefab; // 攻撃ポイント表示オブジェクト(プレハブ).
-    private GameObject attackPointIcons; // 攻撃ポイント表示オブジェクト(インスタンス).
-
-    [SerializeField]
-    private GameObject movePointCountDownPrefab; // 移動ポイントカウントダウン(プレハブ).
-    private GameObject movePointCountDown; // 移動ポイントカウントダウン(インスタンス).
-
-    void Start()
-    {
-        
-    }
->>>>>>> origin/feature/takada
 
     void Update()
     {
@@ -89,7 +69,6 @@ public class UIManager : MonoBehaviour
 
     public void CreateCommandButton()
     {
-<<<<<<< HEAD
         normalMove = CreateButton(EndButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
@@ -144,29 +123,7 @@ public class UIManager : MonoBehaviour
         btn.GetComponent<Button>().onClick.AddListener(action);
 
         return btn;
-=======
-        DeleteCommandButton();
-
-        var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
-        {
-            ("通常攻撃", () => commandController.OnNormalAttackSelected()),
-            ("スキル攻撃", () => commandController.OnSkillAttackSelected()),
-            ("トラップ設置", () => commandController.OnSetTrapSelected())
-        };
-
-        foreach (var (label, onClick) in buttonConfigs)
-        {
-            var buttonObj = Instantiate(buttonPrefab, buttonContainer);
-            var textComponent = buttonObj.GetComponentInChildren<Text>();
-            if (textComponent != null)
-                textComponent.text = label;
-
-            buttonObj.GetComponent<Button>().onClick.AddListener(onClick);
-            buttons.Add(buttonObj);
-        }
->>>>>>> origin/feature/takada
     }
-
 
     public void DeleteCommandButton()
     {
