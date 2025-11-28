@@ -14,20 +14,15 @@ public class UIManager : MonoBehaviour
     private GameObject normalMove, normalAttack, trapAttack;
 
     [SerializeField]
-<<<<<<< HEAD
-    private Canvas mainCanvas;
-=======
     private Canvas mainCanvas; // UI表示キャンバス.
     [SerializeField]
     private Transform buttonContainer; // コマンドボタン整列用オブジェクト.
->>>>>>> origin/feature/takada
 
     [SerializeField]
     private Text remainEnemyCountText,
                  waveCountText;
 
     [SerializeField]
-<<<<<<< HEAD
     private GameObject attackPointIconsPrefab;
     private GameObject attackPointIcons;
 
@@ -41,23 +36,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Vector2 AttackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
     [SerializeField] private Vector2 EndButtonPos;
-=======
-    private GameObject attackPointIconsPrefab; // 攻撃ポイント表示オブジェクト(プレハブ).
-    private GameObject attackPointIcons; // 攻撃ポイント表示オブジェクト(インスタンス).
 
     [SerializeField]
     private GameObject movePointCountDownPrefab; // 移動ポイントカウントダウン(プレハブ).
-    private GameObject movePointCountDown; // 移動ポイントカウントダウン(インスタンス).
 
-    void Start()
-    {
-        
-    }
->>>>>>> origin/feature/takada
 
     void Update()
     {
-        // ターンによってボタン制御
+        // ★ 修正: turnController (小文字) を使用
         if (turnController != null)
         {
             SetButtonsInteractable(turnController.IsPlayerTurn);
@@ -89,15 +75,18 @@ public class UIManager : MonoBehaviour
 
     public void CreateCommandButton()
     {
-<<<<<<< HEAD
+        // ★ 修正: 既存のボタンを削除してから作成
+        DeleteCommandButton();
+
+        // ターン終了ボタン
         normalMove = CreateButton(EndButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
-
             playerMove.CancelMove();          // 移動状態を解除
             turnController.EndPlayerTurn();   // ★ ターン終了
         });
 
+        // 通常攻撃ボタン
         normalAttack = CreateButton(AttackButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
@@ -105,31 +94,63 @@ public class UIManager : MonoBehaviour
             commandController.OnAttackSelected();
         });
 
+        // トラップ設置ボタン
         trapAttack = CreateButton(trapButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
             playerMove.CancelMove();
             commandController.OnSetTrapSelected();
         });
+
+        // ★ 修正: buttonContainer用のボタンを作成（元のコードから移動）
+        CreateContainerButtons();
+    }
+
+    // ★ 新規追加: buttonContainer用のボタンを別メソッドに分離
+    private void CreateContainerButtons()
+    {
+        // ★ 修正: 明示的にUnityActionにキャスト
+        var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
+        {
+            ("通常攻撃", (UnityEngine.Events.UnityAction)(() => commandController.OnMoveSelected())),
+            ("スキル攻撃", (UnityEngine.Events.UnityAction)(() => commandController.OnAttackSelected())),
+            ("トラップ設置", (UnityEngine.Events.UnityAction)(() => commandController.OnSetTrapSelected()))
+        };
+
+        foreach (var config in buttonConfigs)
+        {
+            var buttonObj = Instantiate(buttonPrefab, buttonContainer);
+            var textComponent = buttonObj.GetComponentInChildren<Text>();
+            if (textComponent != null)
+                textComponent.text = config.label;
+
+            buttonObj.GetComponent<Button>().onClick.AddListener(config.onClick);
+            buttons.Add(buttonObj);
+        }
     }
 
     public void SetButtonsInteractable(bool canUse)
     {
-        SetButtonState(normalMove.GetComponent<Button>(), canUse);
-        SetButtonState(normalAttack.GetComponent<Button>(), canUse);
-        SetButtonState(trapAttack.GetComponent<Button>(), canUse);
+        if (normalMove != null)
+            SetButtonState(normalMove.GetComponent<Button>(), canUse);
+        if (normalAttack != null)
+            SetButtonState(normalAttack.GetComponent<Button>(), canUse);
+        if (trapAttack != null)
+            SetButtonState(trapAttack.GetComponent<Button>(), canUse);
     }
 
     // ★ 敵ターンは完全透明
     private void SetButtonState(Button button, bool canUse)
     {
+        if (button == null) return;
+
         button.interactable = canUse;
 
         Image img = button.GetComponent<Image>();
+        if (img == null) return;
+
         Color c = img.color;
-
         c.a = canUse ? 1f : 0f;   // ← 敵ターンは消える
-
         img.color = c;
     }
 
@@ -144,51 +165,40 @@ public class UIManager : MonoBehaviour
         btn.GetComponent<Button>().onClick.AddListener(action);
 
         return btn;
-=======
-        DeleteCommandButton();
-
-        var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
-        {
-            ("通常攻撃", () => commandController.OnNormalAttackSelected()),
-            ("スキル攻撃", () => commandController.OnSkillAttackSelected()),
-            ("トラップ設置", () => commandController.OnSetTrapSelected())
-        };
-
-        foreach (var (label, onClick) in buttonConfigs)
-        {
-            var buttonObj = Instantiate(buttonPrefab, buttonContainer);
-            var textComponent = buttonObj.GetComponentInChildren<Text>();
-            if (textComponent != null)
-                textComponent.text = label;
-
-            buttonObj.GetComponent<Button>().onClick.AddListener(onClick);
-            buttons.Add(buttonObj);
-        }
->>>>>>> origin/feature/takada
     }
-
 
     public void DeleteCommandButton()
     {
         foreach (var button in buttons)
-            Destroy(button);
+        {
+            if (button != null)
+                Destroy(button);
+        }
 
         buttons.Clear();
+
+        // メンバ変数もクリア
+        normalMove = null;
+        normalAttack = null;
+        trapAttack = null;
     }
 
     public void SetSkillPoint(int point)
     {
-        attackPointIcons.GetComponent<AttackPointIconController>().AttackPointSet(point);
+        if (attackPointIcons != null)
+            attackPointIcons.GetComponent<AttackPointIconController>().AttackPointSet(point);
     }
 
     public void SetRemainEnemyCountText(int count)
     {
-        remainEnemyCountText.text = "残り" + count + "体";
+        if (remainEnemyCountText != null)
+            remainEnemyCountText.text = "残り" + count + "体";
     }
 
     public void SetWaveCountText(int count)
     {
-        waveCountText.text = count + "ウェーブ目";
+        if (waveCountText != null)
+            waveCountText.text = count + "ウェーブ目";
     }
 
     public void UpdateWave(int wave)
