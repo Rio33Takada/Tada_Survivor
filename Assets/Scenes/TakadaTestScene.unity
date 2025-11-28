@@ -148,12 +148,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f458a8e3739e2294face71ddcc01bec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
+  playerMove: {fileID: 0}
+  turnController: {fileID: 0}
   mainCanvas: {fileID: 2097453191}
   buttonContainer: {fileID: 1786587434}
   remainEnemyCountText: {fileID: 2030904320}
   waveCountText: {fileID: 604562950}
   attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
+  buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
+  attackPointIconsPos: {x: 0, y: 0}
+  AttackButtonPos: {x: 0, y: 0}
+  trapButtonPos: {x: 0, y: 0}
+  EndButtonPos: {x: 0, y: 0}
   movePointCountDownPrefab: {fileID: 0}
 --- !u!4 &197780718
 Transform:
@@ -645,6 +651,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1677311832}
   - component: {fileID: 1677311831}
+  - component: {fileID: 1677311833}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -665,7 +672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 197780717}
-  gridManager: {fileID: 0}
+  gridManager: {fileID: 1677311833}
   turnController: {fileID: 0}
   player: {fileID: 0}
 --- !u!4 &1677311832
@@ -683,6 +690,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1677311833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677311830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d208ef96d9bb1849b7c02c22dbc0657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 0}
+  width: 10
+  height: 10
+  tileScale: 0.099
+  spacing: 1
 --- !u!1 &1786587433
 GameObject:
   m_ObjectHideFlags: 0
