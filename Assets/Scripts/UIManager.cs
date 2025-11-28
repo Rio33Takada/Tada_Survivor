@@ -1,145 +1,154 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField]
-    private PlayerMove playerMove;
+    [Header("References")]
+    [SerializeField] private PlayerMove playerMove;
+    [SerializeField] private TurnController turnController;
+    [SerializeField] private Canvas mainCanvas;
+    [SerializeField] private Transform buttonContainer;
 
-    [SerializeField]
-    private TurnController turnController;
+    [Header("UI Elements")]
+    [SerializeField] private Text remainEnemyCountText;
+    [SerializeField] private Text waveCountText;
 
-    private CommandController commandController;
-    private GameObject normalMove, normalAttack, trapAttack;
-
-    [SerializeField]
-    private Canvas mainCanvas; // UIï\é¶ÉLÉÉÉìÉoÉX.
-    [SerializeField]
-    private Transform buttonContainer; // ÉRÉ}ÉìÉhÉ{É^ÉìêÆóÒópÉIÉuÉWÉFÉNÉg.
-
-    [SerializeField]
-    private Text remainEnemyCountText,
-                 waveCountText;
-
-    [SerializeField]
-    private GameObject attackPointIconsPrefab;
-    private GameObject attackPointIcons;
-
-    public GameObject buttonPrefab;
-    private List<GameObject> buttons = new List<GameObject>();
-
-    [Header("UI Positions")]
-    [SerializeField] private Vector2 attackPointIconsPos;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject attackPointIconsPrefab;
+    [SerializeField] private List<GameObject> buttonPrefabs;
+    [SerializeField] private GameObject movePointCountDownPrefab;
 
     [Header("Command Button Positions")]
     [SerializeField] private Vector2 AttackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
     [SerializeField] private Vector2 EndButtonPos;
 
-    [SerializeField]
-    private GameObject movePointCountDownPrefab; // à⁄ìÆÉ|ÉCÉìÉgÉJÉEÉìÉgÉ_ÉEÉì(ÉvÉåÉnÉu).
+    [Header("Icon Positions")]
+    [SerializeField] private Vector2 attackPointIconsPos;
 
+    private CommandController commandController;
+    private GameObject attackPointIcons;
+    private GameObject endButton, attackButton, trapButton;
+    private List<GameObject> buttons = new List<GameObject>();
 
     void Update()
     {
-        // Åö èCê≥: turnController (è¨ï∂éö) Çégóp
         if (turnController != null)
         {
             SetButtonsInteractable(turnController.IsPlayerTurn);
         }
     }
 
-    private void ClassInitializer()
-    {
-        commandController = new CommandController();
-    }
-
     public void InitializeUI(GameManager gm)
     {
-        ClassInitializer();
+        commandController = new CommandController();
 
+        InitializeAttackPointIcons();
+        SetSkillPoint(gm.AttackPoint);
+        SetWaveCountText(gm.WaveCount);
+        CreateCommandButton();
+    }
+
+    private void InitializeAttackPointIcons()
+    {
         if (attackPointIcons != null)
             Destroy(attackPointIcons);
 
         attackPointIcons = Instantiate(attackPointIconsPrefab, mainCanvas.transform);
-
         RectTransform apRect = attackPointIcons.GetComponent<RectTransform>();
         apRect.anchoredPosition = attackPointIconsPos;
-
-        SetSkillPoint(gm.AttackPoint);
-        SetWaveCountText(gm.WaveCount);
-
-        CreateCommandButton();
     }
 
     public void CreateCommandButton()
     {
-        // Åö èCê≥: ä˘ë∂ÇÃÉ{É^ÉìÇçÌèúÇµÇƒÇ©ÇÁçÏê¨
         DeleteCommandButton();
 
-        // É^Å[ÉìèIóπÉ{É^Éì
-        normalMove = CreateButton(EndButtonPos, () =>
+        endButton = CreateButton(buttonPrefabs[0], EndButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
-            playerMove.CancelMove();          // à⁄ìÆèÛë‘Çâèú
-            turnController.EndPlayerTurn();   // Åö É^Å[ÉìèIóπ
+            playerMove.CancelMove();
+            turnController.EndPlayerTurn();
         });
 
-        // í èÌçUåÇÉ{É^Éì
-        normalAttack = CreateButton(AttackButtonPos, () =>
+        attackButton = CreateButton(buttonPrefabs[1], AttackButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
             playerMove.CancelMove();
             commandController.OnAttackSelected();
         });
 
-        // ÉgÉâÉbÉvê›íuÉ{É^Éì
-        trapAttack = CreateButton(trapButtonPos, () =>
+        trapButton = CreateButton(buttonPrefabs[2], trapButtonPos, () =>
         {
             if (!turnController.IsPlayerTurn) return;
             playerMove.CancelMove();
             commandController.OnSetTrapSelected();
         });
 
-
         CreateContainerButtons();
     }
 
-
     private void CreateContainerButtons()
     {
+        CreateContainerButton(buttonPrefabs[0], "ÁßªÂãï", () => commandController.OnEndSelected());
+        CreateContainerButton(buttonPrefabs[1], "ÊîªÊíÉ", () => commandController.OnAttackSelected());
+        CreateContainerButton(buttonPrefabs[2], "„Éà„É©„ÉÉ„Éó", () => commandController.OnSetTrapSelected());
+    }
 
-        var buttonConfigs = new List<(string label, UnityEngine.Events.UnityAction onClick)>
+    private void CreateContainerButton(GameObject prefab, string label, UnityEngine.Events.UnityAction onClick)
+    {
+        GameObject buttonObj = Instantiate(prefab, buttonContainer);
+
+        Text text = buttonObj.GetComponentInChildren<Text>();
+        if (text != null)
+            text.text = label;
+
+        buttonObj.GetComponent<Button>().onClick.AddListener(onClick);
+        buttons.Add(buttonObj);
+    }
+
+    private GameObject CreateButton(GameObject prefab, Vector2 position, UnityEngine.Events.UnityAction action)
+    {
+        GameObject btn = Instantiate(prefab, mainCanvas.transform);
+        buttons.Add(btn);
+
+        // Ë¶™ Button „ÅÆ RectTransform „Çí‰ΩçÁΩÆ„Å´Âêà„Çè„Åõ„Çã
+        RectTransform rect = btn.GetComponent<RectTransform>();
+        rect.anchoredPosition = position;
+
+        // „Éú„Çø„É≥„ÅÆ„ÇØ„É™„ÉÉ„ÇØÂá¶ÁêÜ
+        Button buttonComp = btn.GetComponent<Button>();
+        buttonComp.onClick.AddListener(action);
+
+        // Ë¶™ Button „ÅßËâ≤Â§âÊõ¥„ÇÑÊúâÂäπ/ÁÑ°Âäπ„ÇíÂà∂Âæ°
+        return btn;
+    }
+
+
+    public void DeleteCommandButton()
+    {
+        foreach (GameObject button in buttons)
         {
-            ("í èÌçUåÇ", (UnityEngine.Events.UnityAction)(() => commandController.OnMoveSelected())),
-            ("ÉXÉLÉãçUåÇ", (UnityEngine.Events.UnityAction)(() => commandController.OnAttackSelected())),
-            ("ÉgÉâÉbÉvê›íu", (UnityEngine.Events.UnityAction)(() => commandController.OnSetTrapSelected()))
-        };
-
-        foreach (var config in buttonConfigs)
-        {
-            var buttonObj = Instantiate(buttonPrefab, buttonContainer);
-            var textComponent = buttonObj.GetComponentInChildren<Text>();
-            if (textComponent != null)
-                textComponent.text = config.label;
-
-            buttonObj.GetComponent<Button>().onClick.AddListener(config.onClick);
-            buttons.Add(buttonObj);
+            if (button != null)
+                Destroy(button);
         }
+
+        buttons.Clear();
+        endButton = null;
+        attackButton = null;
+        trapButton = null;
     }
 
     public void SetButtonsInteractable(bool canUse)
     {
-        if (normalMove != null)
-            SetButtonState(normalMove.GetComponent<Button>(), canUse);
-        if (normalAttack != null)
-            SetButtonState(normalAttack.GetComponent<Button>(), canUse);
-        if (trapAttack != null)
-            SetButtonState(trapAttack.GetComponent<Button>(), canUse);
+        if (endButton != null)
+            SetButtonState(endButton.GetComponent<Button>(), canUse);
+        if (attackButton != null)
+            SetButtonState(attackButton.GetComponent<Button>(), canUse);
+        if (trapButton != null)
+            SetButtonState(trapButton.GetComponent<Button>(), canUse);
     }
 
-    // Åö ìGÉ^Å[ÉìÇÕäÆëSìßñæ
     private void SetButtonState(Button button, bool canUse)
     {
         if (button == null) return;
@@ -150,37 +159,8 @@ public class UIManager : MonoBehaviour
         if (img == null) return;
 
         Color c = img.color;
-        c.a = canUse ? 1f : 0f;   // Å© ìGÉ^Å[ÉìÇÕè¡Ç¶ÇÈ
+        c.a = canUse ? 1f : 0f;
         img.color = c;
-    }
-
-    private GameObject CreateButton(Vector2 position, UnityEngine.Events.UnityAction action)
-    {
-        GameObject btn = Instantiate(buttonPrefab, mainCanvas.transform);
-        buttons.Add(btn);
-
-        RectTransform rect = btn.GetComponent<RectTransform>();
-        rect.anchoredPosition = position;
-
-        btn.GetComponent<Button>().onClick.AddListener(action);
-
-        return btn;
-    }
-
-    public void DeleteCommandButton()
-    {
-        foreach (var button in buttons)
-        {
-            if (button != null)
-                Destroy(button);
-        }
-
-        buttons.Clear();
-
-        // ÉÅÉìÉoïœêîÇ‡ÉNÉäÉA
-        normalMove = null;
-        normalAttack = null;
-        trapAttack = null;
     }
 
     public void SetSkillPoint(int point)
@@ -192,13 +172,13 @@ public class UIManager : MonoBehaviour
     public void SetRemainEnemyCountText(int count)
     {
         if (remainEnemyCountText != null)
-            remainEnemyCountText.text = "écÇË" + count + "ëÃ";
+            remainEnemyCountText.text = "ÊÆã„Çä" + count + "‰Ωì";
     }
 
     public void SetWaveCountText(int count)
     {
         if (waveCountText != null)
-            waveCountText.text = count + "ÉEÉFÅ[Éuñ⁄";
+            waveCountText.text = count + "„Ç¶„Çß„Éº„ÉñÁõÆ";
     }
 
     public void UpdateWave(int wave)

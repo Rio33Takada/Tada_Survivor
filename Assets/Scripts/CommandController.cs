@@ -1,15 +1,10 @@
 using UnityEngine;
 
-public class CommandController
+public class CommandController : MonoBehaviour
 {
-    public CommandController()
+    public void OnEndSelected()
     {
-
-    }
-
-    public void OnMoveSelected()
-    {
-        Debug.Log("MoveSelected");
+        Debug.Log("EndSelected");
     }
 
     public void OnAttackSelected()

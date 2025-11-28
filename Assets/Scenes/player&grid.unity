@@ -199,14 +199,21 @@ MonoBehaviour:
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
   mainCanvas: {fileID: 1285516938}
+  buttonContainer: {fileID: 1169379195}
   remainEnemyCountText: {fileID: 1445908444}
   waveCountText: {fileID: 1428658024}
   attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
-  buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
-  attackPointIconsPos: {x: -650, y: -360}
-  AttackButtonPos: {x: 500, y: 0}
-  trapButtonPos: {x: 500, y: -150}
-  EndButtonPos: {x: 500, y: -300}
+  buttonPrefabs:
+  - {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
+  - {fileID: 3537584245998133698, guid: 89ed9af213fcaa341bc000241dc5167f, type: 3}
+  - {fileID: 3537584245998133698, guid: f4ced6a86ce40b545a88b2541468c1d4, type: 3}
+  - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}
+  - {fileID: 3537584245998133698, guid: 12a60ff8bb2329a4c89d008ba3ae32d5, type: 3}
+  movePointCountDownPrefab: {fileID: 0}
+  AttackButtonPos: {x: 580, y: 0}
+  trapButtonPos: {x: 600, y: -100}
+  EndButtonPos: {x: 620, y: -200}
+  attackPointIconsPos: {x: -650, y: -350}
 --- !u!114 &299829454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,6 +383,37 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &1169379194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1169379195}
+  m_Layer: 0
+  m_Name: Button Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1169379195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169379194}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1285516935
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,5 +954,6 @@ SceneRoots:
   - {fileID: 1461421639}
   - {fileID: 1310171388}
   - {fileID: 299829451}
+  - {fileID: 1169379195}
   - {fileID: 1285516939}
   - {fileID: 2004427934}
