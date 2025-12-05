@@ -156,10 +156,10 @@ MonoBehaviour:
   waveCountText: {fileID: 604562950}
   attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
   buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
-  attackPointIconsPos: {x: 0, y: 0}
-  AttackButtonPos: {x: 0, y: 0}
-  trapButtonPos: {x: 0, y: 0}
-  EndButtonPos: {x: 0, y: 0}
+  attackPointIconsPos: {x: -800, y: -400}
+  AttackButtonPos: {x: 500, y: -400}
+  trapButtonPos: {x: 650, y: -400}
+  EndButtonPos: {x: 800, y: -400}
   movePointCountDownPrefab: {fileID: 0}
 --- !u!4 &197780718
 Transform:
@@ -823,7 +823,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 439, y: -701}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1786587435
