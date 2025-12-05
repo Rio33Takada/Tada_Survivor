@@ -30,7 +30,7 @@ public class ClearText : MonoBehaviour
 
         c.a = targetAlpha;
         text.color = c;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
         next_text.SetActive(true);
     }
 }
