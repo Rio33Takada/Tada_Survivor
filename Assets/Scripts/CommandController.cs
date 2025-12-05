@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CommandController : MonoBehaviour
 {
@@ -9,7 +9,16 @@ public class CommandController : MonoBehaviour
 
     public void OnAttackSelected()
     {
-        Debug.Log("AttackSelected");
+        Debug.Log("AttackMenuSelected");
+    }
+    public void OnNomalAttackSelected()
+    {
+        Debug.Log("NomalAttackSelected");
+    }
+
+    public void OnSpecialAttackSelected()
+    {
+        Debug.Log("SpecialAttackSelected");
     }
 
     public void OnSetTrapSelected()

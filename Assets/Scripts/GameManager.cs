@@ -1,76 +1,131 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     [Header("Managers")]
-    public UIManager uiManager;
-    public GridManager gridManager;
-    public TurnController turnController;
+    [SerializeField] private UIManager uiManager;
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private TurnController turnController;
 
     [Header("Player")]
-    public PlayerMove player; // PlayerMove‚ğInspector‚Åİ’è
+    [SerializeField] private PlayerMove player;
 
-    [Header("Game Stats")]
-    public int AttackPoint { get; private set; } // UŒ‚ƒ|ƒCƒ“ƒg
-    public int MovePoint { get; private set; }   // ˆÚ“®ƒ|ƒCƒ“ƒg
-    public int WaveCount { get; private set; }   // Œ»İ‚ÌƒEƒF[ƒu”
+    [Header("Initial Stats")]
+    [SerializeField] private int initialAttackPoint = 3;
+    [SerializeField] private int initialMovePoint = 5;
+
+    public int AttackPoint { get; private set; }
+    public int MovePoint { get; private set; }
+    public int WaveCount { get; private set; }
 
     private void Awake()
     {
-        AwakeGame();
+        ValidateReferences();
+        InitializeGrid();
     }
 
     private void Start()
     {
-        StartGame();
+        InitializeGame();
     }
 
-    private void AwakeGame()
+    private void ValidateReferences()
     {
-        // ƒOƒŠƒbƒh¶¬
+        if (gridManager == null)
+            Debug.LogError("GridManager ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
+        if (uiManager == null)
+            Debug.LogError("UIManager ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
+        if (turnController == null)
+            Debug.LogError("TurnController ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
+        if (player == null)
+            Debug.LogError("PlayerMove ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
+    }
+
+    private void InitializeGrid()
+    {
         if (gridManager != null)
+        {
             gridManager.GenerateGrid();
-        else
-            Debug.LogError("GridManager ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+        }
     }
 
-    private void StartGame()
+    private void InitializeGame()
     {
-        InitializeVariables();
+        InitializeStats();
+        InitializeManagers();
+        InitializePlayer();
+    }
 
+    private void InitializeStats()
+    {
+        AttackPoint = initialAttackPoint;
+        MovePoint = initialMovePoint;
+        WaveCount = 0;
+    }
+
+    private void InitializeManagers()
+    {
         if (uiManager != null)
+        {
             uiManager.InitializeUI(this);
+        }
 
         if (turnController != null)
+        {
             turnController.Initialize(this);
+        }
+    }
 
+    private void InitializePlayer()
+    {
         if (player != null)
         {
             player.gridManager = gridManager;
-            player.turnController = turnController; // © ’Ç‰ÁI
+            player.turnController = turnController;
         }
-
-        turnController.TurnChange();
-    }
-
-
-    private void InitializeVariables()
-    {
-        AttackPoint = 3;
-        MovePoint = 5;
-        WaveCount = 0;
     }
 
     public void NextWave()
     {
         WaveCount++;
+
         if (uiManager != null)
+        {
             uiManager.UpdateWave(WaveCount);
+        }
+
+        Debug.Log($"Wave {WaveCount} é–‹å§‹");
     }
 
     public void SpawnEnemy(int x, int y)
     {
-        // “G¶¬ˆ—
-        Debug.Log($"“G‚ğ¶¬: ({x}, {y})");
+        Debug.Log($"æ•µã‚’ç”Ÿæˆ: ({x}, {y})");
+        // TODO: æ•µç”Ÿæˆãƒ­ã‚¸ãƒƒã‚¯ã‚’å®Ÿè£…
+    }
+
+    public void ConsumeAttackPoint(int amount)
+    {
+        AttackPoint = Mathf.Max(0, AttackPoint - amount);
+
+        if (uiManager != null)
+        {
+            uiManager.SetSkillPoint(AttackPoint);
+        }
+    }
+
+    public void ConsumeMovePoint(int amount)
+    {
+        MovePoint = Mathf.Max(0, MovePoint - amount);
+    }
+
+    public void RestorePoints()
+    {
+        AttackPoint = initialAttackPoint;
+        MovePoint = initialMovePoint;
+
+        if (uiManager != null)
+        {
+            uiManager.SetSkillPoint(AttackPoint);
+        }
     }
 }

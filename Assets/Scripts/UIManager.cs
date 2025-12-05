@@ -17,22 +17,43 @@ public class UIManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject attackPointIconsPrefab;
     [SerializeField] private List<GameObject> buttonPrefabs;
-    [SerializeField] private GameObject movePointCountDownPrefab;
 
-    [Header("Command Button Positions")]
-    [SerializeField] private Vector2 AttackButtonPos;
+    [Header("Button Positions")]
+    [SerializeField] private Vector2 attackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
-    [SerializeField] private Vector2 EndButtonPos;
+    [SerializeField] private Vector2 endButtonPos;
+    [SerializeField] private Vector2 normalAttackButtonPos;
+    [SerializeField] private Vector2 specialAttackButtonPos;
 
     [Header("Icon Positions")]
     [SerializeField] private Vector2 attackPointIconsPos;
 
     private CommandController commandController;
     private GameObject attackPointIcons;
-    private GameObject endButton, attackButton, trapButton;
-    private List<GameObject> buttons = new List<GameObject>();
+    private readonly List<GameObject> activeButtons = new List<GameObject>();
 
-    void Update()
+    private Button endButton;
+    private Button attackButton;
+    private Button trapButton;
+    private Button normalAttackButton;
+    private Button specialAttackButton;
+
+    private void Update()
+    {
+        UpdateButtonStates();
+        HandleEscapeInput();
+    }
+
+    public void InitializeUI(GameManager gameManager)
+    {
+        commandController = new CommandController();
+        InitializeAttackPointIcons();
+        SetSkillPoint(gameManager.AttackPoint);
+        SetWaveCountText(gameManager.WaveCount);
+        CreateMainCommandButtons();
+    }
+
+    private void UpdateButtonStates()
     {
         if (turnController != null)
         {
@@ -40,52 +61,47 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void InitializeUI(GameManager gm)
+    private void HandleEscapeInput()
     {
-        commandController = new CommandController();
-
-        InitializeAttackPointIcons();
-        SetSkillPoint(gm.AttackPoint);
-        SetWaveCountText(gm.WaveCount);
-        CreateCommandButton();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CreateMainCommandButtons();
+        }
     }
 
     private void InitializeAttackPointIcons()
     {
         if (attackPointIcons != null)
+        {
             Destroy(attackPointIcons);
+        }
 
         attackPointIcons = Instantiate(attackPointIconsPrefab, mainCanvas.transform);
-        RectTransform apRect = attackPointIcons.GetComponent<RectTransform>();
-        apRect.anchoredPosition = attackPointIconsPos;
+        RectTransform rectTransform = attackPointIcons.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = attackPointIconsPos;
     }
 
-    public void CreateCommandButton()
+    public void CreateMainCommandButtons()
     {
-        DeleteCommandButton();
+        ClearAllButtons();
+        UnlockPlayerMovement();
 
-        endButton = CreateButton(buttonPrefabs[0], EndButtonPos, () =>
-        {
-            if (!turnController.IsPlayerTurn) return;
-            playerMove.CancelMove();
-            turnController.EndPlayerTurn();
-        });
-
-        attackButton = CreateButton(buttonPrefabs[1], AttackButtonPos, () =>
-        {
-            if (!turnController.IsPlayerTurn) return;
-            playerMove.CancelMove();
-            commandController.OnAttackSelected();
-        });
-
-        trapButton = CreateButton(buttonPrefabs[2], trapButtonPos, () =>
-        {
-            if (!turnController.IsPlayerTurn) return;
-            playerMove.CancelMove();
-            commandController.OnSetTrapSelected();
-        });
+        endButton = CreateCanvasButton(buttonPrefabs[0], endButtonPos, OnEndButtonClicked);
+        attackButton = CreateCanvasButton(buttonPrefabs[1], attackButtonPos, OnAttackButtonClicked);
+        trapButton = CreateCanvasButton(buttonPrefabs[2], trapButtonPos, OnTrapButtonClicked);
 
         CreateContainerButtons();
+    }
+
+    private void ShowAttackMenu()
+    {
+        ClearAllButtons();
+        LockPlayerMovement();
+
+        normalAttackButton = CreateCanvasButton(buttonPrefabs[3], normalAttackButtonPos,
+            () => commandController.OnNomalAttackSelected());
+        specialAttackButton = CreateCanvasButton(buttonPrefabs[4], specialAttackButtonPos,
+            () => commandController.OnSpecialAttackSelected());
     }
 
     private void CreateContainerButtons()
@@ -101,84 +117,148 @@ public class UIManager : MonoBehaviour
 
         Text text = buttonObj.GetComponentInChildren<Text>();
         if (text != null)
-            text.text = label;
-
-        buttonObj.GetComponent<Button>().onClick.AddListener(onClick);
-        buttons.Add(buttonObj);
-    }
-
-    private GameObject CreateButton(GameObject prefab, Vector2 position, UnityEngine.Events.UnityAction action)
-    {
-        GameObject btn = Instantiate(prefab, mainCanvas.transform);
-        buttons.Add(btn);
-
-        // 親 Button の RectTransform を位置に合わせる
-        RectTransform rect = btn.GetComponent<RectTransform>();
-        rect.anchoredPosition = position;
-
-        // ボタンのクリック処理
-        Button buttonComp = btn.GetComponent<Button>();
-        buttonComp.onClick.AddListener(action);
-
-        // 親 Button で色変更や有効/無効を制御
-        return btn;
-    }
-
-
-    public void DeleteCommandButton()
-    {
-        foreach (GameObject button in buttons)
         {
-            if (button != null)
-                Destroy(button);
+            text.text = label;
         }
 
-        buttons.Clear();
+        Button button = buttonObj.GetComponent<Button>();
+        button.onClick.AddListener(onClick);
+
+        activeButtons.Add(buttonObj);
+    }
+
+    private Button CreateCanvasButton(GameObject prefab, Vector2 position, UnityEngine.Events.UnityAction action)
+    {
+        GameObject buttonObj = Instantiate(prefab, mainCanvas.transform);
+        activeButtons.Add(buttonObj);
+
+        RectTransform rectTransform = buttonObj.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = position;
+
+        Button button = buttonObj.GetComponent<Button>();
+        button.onClick.AddListener(action);
+
+        return button;
+    }
+
+    private void ClearAllButtons()
+    {
+        foreach (GameObject button in activeButtons)
+        {
+            if (button != null)
+            {
+                Destroy(button);
+            }
+        }
+
+        activeButtons.Clear();
+        ResetButtonReferences();
+    }
+
+    private void ResetButtonReferences()
+    {
         endButton = null;
         attackButton = null;
         trapButton = null;
+        normalAttackButton = null;
+        specialAttackButton = null;
     }
 
-    public void SetButtonsInteractable(bool canUse)
+    private void OnEndButtonClicked()
     {
-        if (endButton != null)
-            SetButtonState(endButton.GetComponent<Button>(), canUse);
-        if (attackButton != null)
-            SetButtonState(attackButton.GetComponent<Button>(), canUse);
-        if (trapButton != null)
-            SetButtonState(trapButton.GetComponent<Button>(), canUse);
+        if (!ValidatePlayerTurn()) return;
+
+        playerMove.CancelMove();
+        turnController.EndPlayerTurn();
     }
 
-    private void SetButtonState(Button button, bool canUse)
+    private void OnAttackButtonClicked()
+    {
+        if (!ValidatePlayerTurn()) return;
+
+        playerMove.CancelMove();
+        ShowAttackMenu();
+    }
+
+    private void OnTrapButtonClicked()
+    {
+        if (!ValidatePlayerTurn()) return;
+
+        playerMove.CancelMove();
+        commandController.OnSetTrapSelected();
+    }
+
+    private bool ValidatePlayerTurn()
+    {
+        return turnController != null && turnController.IsPlayerTurn;
+    }
+
+    private void LockPlayerMovement()
+    {
+        if (playerMove != null)
+        {
+            playerMove.isActionLocked = true;
+        }
+    }
+
+    private void UnlockPlayerMovement()
+    {
+        if (playerMove != null)
+        {
+            playerMove.isActionLocked = false;
+        }
+    }
+
+    public void SetButtonsInteractable(bool isInteractable)
+    {
+        SetButtonState(endButton, isInteractable);
+        SetButtonState(attackButton, isInteractable);
+        SetButtonState(trapButton, isInteractable);
+        SetButtonState(normalAttackButton, isInteractable);
+        SetButtonState(specialAttackButton, isInteractable);
+    }
+
+    private void SetButtonState(Button button, bool isInteractable)
     {
         if (button == null) return;
 
-        button.interactable = canUse;
+        button.interactable = isInteractable;
 
-        Image img = button.GetComponent<Image>();
-        if (img == null) return;
-
-        Color c = img.color;
-        c.a = canUse ? 1f : 0f;
-        img.color = c;
+        Image image = button.GetComponent<Image>();
+        if (image != null)
+        {
+            Color color = image.color;
+            color.a = isInteractable ? 1f : 0f;
+            image.color = color;
+        }
     }
 
     public void SetSkillPoint(int point)
     {
         if (attackPointIcons != null)
-            attackPointIcons.GetComponent<AttackPointIconController>().AttackPointSet(point);
+        {
+            AttackPointIconController controller = attackPointIcons.GetComponent<AttackPointIconController>();
+            if (controller != null)
+            {
+                controller.AttackPointSet(point);
+            }
+        }
     }
 
     public void SetRemainEnemyCountText(int count)
     {
         if (remainEnemyCountText != null)
-            remainEnemyCountText.text = "残り" + count + "体";
+        {
+            remainEnemyCountText.text = $"残り{count}体";
+        }
     }
 
     public void SetWaveCountText(int count)
     {
         if (waveCountText != null)
-            waveCountText.text = count + "ウェーブ目";
+        {
+            waveCountText.text = $"{count}ウェーブ目";
+        }
     }
 
     public void UpdateWave(int wave)

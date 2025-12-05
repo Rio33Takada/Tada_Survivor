@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 299829453}
+  enemyTurnDuration: 1.5
 --- !u!114 &299829453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,10 +210,11 @@ MonoBehaviour:
   - {fileID: 3537584245998133698, guid: f4ced6a86ce40b545a88b2541468c1d4, type: 3}
   - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}
   - {fileID: 3537584245998133698, guid: 12a60ff8bb2329a4c89d008ba3ae32d5, type: 3}
-  movePointCountDownPrefab: {fileID: 0}
-  AttackButtonPos: {x: 580, y: 0}
+  attackButtonPos: {x: 600, y: 0}
   trapButtonPos: {x: 600, y: -100}
-  EndButtonPos: {x: 620, y: -200}
+  endButtonPos: {x: 600, y: -200}
+  normalAttackButtonPos: {x: 600, y: -100}
+  specialAttackButtonPos: {x: 600, y: -200}
   attackPointIconsPos: {x: -650, y: -350}
 --- !u!114 &299829454
 MonoBehaviour:
@@ -230,6 +232,8 @@ MonoBehaviour:
   gridManager: {fileID: 299829450}
   turnController: {fileID: 299829452}
   player: {fileID: 530873857}
+  initialAttackPoint: 3
+  initialMovePoint: 5
 --- !u!114 &530873857 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1432325422527430320, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}

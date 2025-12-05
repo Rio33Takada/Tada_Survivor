@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -7,92 +7,144 @@ public class PlayerMove : MonoBehaviour
     public TurnController turnController;
 
     [Header("Move Settings")]
-    public float moveSpeed = 2f;
-    public float yOffset = 0.5f;
+    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float yOffset = 0.5f;
+    [SerializeField] private float doubleClickThreshold = 0.3f;
+    [SerializeField] private float positionThreshold = 0.01f;
+
+    public bool isActionLocked = false;
 
     private Vector2Int gridPos;
     private Vector3 targetPos;
     private bool isMoving = false;
     private bool canMove = false;
-
     private float lastClickTime = 0f;
-    private float doubleClickThreshold = 0.3f; // É_ÉuÉãÉNÉäÉbÉNîªíËéûä‘
 
-    void Start()
+    private static readonly Vector2Int[] MOVE_DIRECTIONS =
     {
-        gridPos = new Vector2Int(0, 0);
-
-        if (gridManager == null)
-        {
-            Debug.LogError("GridManagerÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅB");
-            return;
-        }
-
-        Tile startTile = gridManager.GetTileAt(gridPos);
-        if (startTile != null)
-        {
-            targetPos = startTile.transform.position + new Vector3(0, yOffset, 0);
-            transform.position = targetPos;
-        }
-    }
-
-    void Update()
-    {
-        if (isMoving)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-
-            if (Vector3.Distance(transform.position, targetPos) < 0.01f)
-            {
-                isMoving = false;
-                canMove = false;
-                ClearMovableTiles(); // Åö êFÇñﬂÇ∑
-                Debug.Log("ÉvÉåÉCÉÑÅ[ÇÃà⁄ìÆèIóπ");
-                turnController?.EndPlayerTurn();
-            }
-
-        }
-
-
-        // ÉvÉåÉCÉÑÅ[É^Å[ÉìíÜÇÃÇ›ÉNÉäÉbÉNëÄçÏÇéÛÇØïtÇØÇÈ
-        if (!isMoving && canMove && turnController != null && turnController.IsPlayerTurn)
-        {
-            if (Input.GetMouseButtonDown(0))
-                TryMoveToMouseClick();
-        }
-
-        // ÉvÉåÉCÉÑÅ[É^Å[ÉìíÜÇÃÇ›ÅAÉvÉåÉCÉÑÅ[ÇÉ_ÉuÉãÉNÉäÉbÉNÇ≈à⁄ìÆîÕàÕï\é¶
-        if (turnController != null && turnController.IsPlayerTurn && Input.GetMouseButtonDown(0))
-        {
-            if (IsPlayerClicked())
-            {
-                if (Time.time - lastClickTime < doubleClickThreshold)
-                {
-                    EnableMoveOnce(); // Åö à⁄ìÆâ¬î\îÕàÕÇï\é¶
-                }
-
-                lastClickTime = Time.time;
-            }
-        }
-
-
-    }
-
-    void ShowMovableTiles()
-    {
-        ClearMovableTiles();
-
-        Vector2Int[] directions =
-        {
         Vector2Int.up,
         Vector2Int.down,
         Vector2Int.left,
         Vector2Int.right
     };
 
-        foreach (var dir in directions)
+    private void Start()
+    {
+        InitializePlayer();
+    }
+
+    private void Update()
+    {
+        if (isMoving)
         {
-            Vector2Int checkPos = gridPos + dir;
+            UpdateMovement();
+        }
+        else if (CanAcceptInput())
+        {
+            HandleInput();
+        }
+    }
+
+    private void InitializePlayer()
+    {
+        gridPos = Vector2Int.zero;
+
+        if (gridManager == null)
+        {
+            Debug.LogError("GridManager„ÅåË®≠ÂÆö„Åï„Çå„Å¶„ÅÑ„Åæ„Åõ„Çì„ÄÇ");
+            return;
+        }
+
+        Tile startTile = gridManager.GetTileAt(gridPos);
+        if (startTile != null)
+        {
+            targetPos = GetTilePosition(startTile);
+            transform.position = targetPos;
+        }
+    }
+
+    private void UpdateMovement()
+    {
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            targetPos,
+            moveSpeed * Time.deltaTime
+        );
+
+        if (Vector3.Distance(transform.position, targetPos) < positionThreshold)
+        {
+            OnMoveComplete();
+        }
+    }
+
+    private void OnMoveComplete()
+    {
+        isMoving = false;
+        canMove = false;
+        ClearMovableTiles();
+
+        Debug.Log($"„Éó„É¨„Ç§„É§„ÉºÁßªÂãïÂÆå‰∫Ü: {gridPos}");
+
+        if (turnController != null)
+        {
+            turnController.EndPlayerTurn();
+        }
+    }
+
+    private bool CanAcceptInput()
+    {
+        return !isActionLocked
+            && turnController != null
+            && turnController.IsPlayerTurn;
+    }
+
+    private void HandleInput()
+    {
+        if (!Input.GetMouseButtonDown(0)) return;
+
+        if (canMove)
+        {
+            TryMoveToMouseClick();
+        }
+        else if (IsPlayerClicked())
+        {
+            HandlePlayerClick();
+        }
+    }
+
+    private void HandlePlayerClick()
+    {
+        float timeSinceLastClick = Time.time - lastClickTime;
+
+        if (timeSinceLastClick < doubleClickThreshold)
+        {
+            EnableMoveMode();
+        }
+
+        lastClickTime = Time.time;
+    }
+
+    public void EnableMoveMode()
+    {
+        canMove = true;
+        ShowMovableTiles();
+        Debug.Log("ÁßªÂãï„É¢„Éº„ÉâÊúâÂäπÂåñ");
+    }
+
+    public void CancelMove()
+    {
+        canMove = false;
+        isMoving = false;
+        ClearMovableTiles();
+    }
+
+    private void ShowMovableTiles()
+    {
+        ClearMovableTiles();
+
+        foreach (Vector2Int direction in MOVE_DIRECTIONS)
+        {
+            Vector2Int checkPos = gridPos + direction;
             Tile tile = gridManager.GetTileAt(checkPos);
 
             if (tile != null && tile.walkable)
@@ -102,64 +154,80 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void ClearMovableTiles()
+    private void ClearMovableTiles()
     {
         Tile[,] allTiles = gridManager.GetAllTiles();
+        int width = allTiles.GetLength(0);
+        int height = allTiles.GetLength(1);
 
-        for (int x = 0; x < allTiles.GetLength(0); x++)
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < allTiles.GetLength(1); y++)
+            for (int y = 0; y < height; y++)
             {
                 allTiles[x, y].SetMovableColor(false);
             }
         }
+        Debug.Log("ÁßªÂãï„É¢„Éº„ÉâÁÑ°ÂäπÂåñ");
     }
 
-    public void CancelMove()
-    {
-        canMove = false;
-        isMoving = false;
-        ClearMovableTiles(); // êFÇå≥Ç…ñﬂÇ∑
-    }
-
-    bool IsPlayerClicked()
+    private void TryMoveToMouseClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+
+        Tile clickedTile = hit.collider.GetComponent<Tile>();
+        if (clickedTile == null) return;
+
+        Vector2Int targetGridPos = clickedTile.gridPosition;
+
+        if (IsAdjacentTile(targetGridPos))
+        {
+            MoveToTile(clickedTile, targetGridPos);
+        }
+    }
+
+    private bool IsAdjacentTile(Vector2Int targetGridPos)
+    {
+        Vector2Int diff = targetGridPos - gridPos;
+
+        return (Mathf.Abs(diff.x) == 1 && diff.y == 0) ||
+               (Mathf.Abs(diff.y) == 1 && diff.x == 0);
+    }
+
+    private void MoveToTile(Tile tile, Vector2Int newGridPos)
+    {
+        gridPos = newGridPos;
+        targetPos = GetTilePosition(tile);
+        isMoving = true;
+
+        Debug.Log($"„Éó„É¨„Ç§„É§„ÉºÁßªÂãïÈñãÂßã: {gridPos}");
+    }
+
+    private bool IsPlayerClicked()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.gameObject == this.gameObject)
-                return true;
+            return hit.collider.gameObject == gameObject;
         }
+
         return false;
     }
 
-    public void EnableMoveOnce()
+    private Vector3 GetTilePosition(Tile tile)
     {
-        canMove = true;
-        ShowMovableTiles();
+        return tile.transform.position + new Vector3(0, yOffset, 0);
     }
 
-    void TryMoveToMouseClick()
+    public Vector2Int GetGridPosition()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            Tile clickedTile = hit.collider.GetComponent<Tile>();
-            if (clickedTile == null) return;
-
-            Vector2Int targetGridPos = clickedTile.gridPosition;
-            Vector2Int diff = targetGridPos - gridPos;
-
-            // è„â∫ç∂âEÇÃ1É}ÉXÇÃÇ›à⁄ìÆâ¬
-            if ((Mathf.Abs(diff.x) == 1 && diff.y == 0) ||
-                (Mathf.Abs(diff.y) == 1 && diff.x == 0))
-            {
-                gridPos = targetGridPos;
-                targetPos = clickedTile.transform.position + new Vector3(0, yOffset, 0);
-                isMoving = true;
-                Debug.Log($"ÉvÉåÉCÉÑÅ[à⁄ìÆ: {gridPos}");
-            }
-        }
+        return gridPos;
     }
 
+    public bool IsMoving()
+    {
+        return isMoving;
+    }
 }
