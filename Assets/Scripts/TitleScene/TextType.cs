@@ -95,6 +95,12 @@ public class TextType : MonoBehaviour
         }
         else
         {
+            StartCoroutine(delay());
+        }
+
+        IEnumerator delay()
+        {
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene("MapScene");
         }
     }
