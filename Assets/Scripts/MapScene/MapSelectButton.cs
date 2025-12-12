@@ -5,7 +5,7 @@ public class MapSelectButton : MonoBehaviour
 {
     public void SelectGrassland()
     {
-        SceneManager.LoadScene("");
+        SceneManager.LoadScene("player&grid");
     }
 
     public void SelectVolcano()
