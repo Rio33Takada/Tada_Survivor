@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     public int MovePoint { get; private set; }
     public int WaveCount { get; private set; }
 
+    BattleEnemyController battleEnemyController;
+    [SerializeField] EnemyPrefabHolder enemyPrefabHolder;
+
     private void Awake()
     {
         ValidateReferences();
@@ -54,6 +57,8 @@ public class GameManager : MonoBehaviour
         InitializeStats();
         InitializeManagers();
         InitializePlayer();
+        SpawnEnemy(6, 6);
+        SpawnEnemy(4, 8);
     }
 
     private void InitializeStats()
@@ -65,6 +70,8 @@ public class GameManager : MonoBehaviour
 
     private void InitializeManagers()
     {
+        battleEnemyController = new BattleEnemyController(gridManager, enemyPrefabHolder, player);
+
         if (uiManager != null)
         {
             uiManager.InitializeUI(this);
@@ -72,7 +79,7 @@ public class GameManager : MonoBehaviour
 
         if (turnController != null)
         {
-            turnController.Initialize(this);
+            turnController.Initialize(this, battleEnemyController);
         }
     }
 
@@ -101,6 +108,21 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"敵を生成: ({x}, {y})");
         // TODO: 敵生成ロジックを実装
+        EnemyType type = EnemyType.knight;
+        switch (type)
+        {
+            case EnemyType.knight:
+                battleEnemyController.SpawnEnemy(EnemyType.knight, new Vector2Int(x, y));
+                break;
+            case EnemyType.archer:
+                battleEnemyController.SpawnEnemy(EnemyType.archer, new Vector2Int(x, y));
+                break;
+            case EnemyType.bomber:
+                battleEnemyController.SpawnEnemy(EnemyType.bomber, new Vector2Int(x, y));
+                break;
+            default:
+                return;
+        }
     }
 
     public void ConsumeAttackPoint(int amount)
@@ -109,7 +131,7 @@ public class GameManager : MonoBehaviour
 
         if (uiManager != null)
         {
-            uiManager.SetSkillPoint(AttackPoint);
+            //uiManager.SetSkillPoint(AttackPoint);
         }
     }
 
@@ -125,7 +147,7 @@ public class GameManager : MonoBehaviour
 
         if (uiManager != null)
         {
-            uiManager.SetSkillPoint(AttackPoint);
+            //uiManager.SetSkillPoint(AttackPoint);
         }
     }
 }

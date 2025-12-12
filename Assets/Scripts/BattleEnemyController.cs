@@ -1,6 +1,7 @@
 using takada;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 public class BattleEnemyController
 {
     private BattleEnemyFactory enemyFactory;
@@ -29,13 +30,14 @@ public class BattleEnemyController
         enemyFactory.CreateBattleEnemy(type, pos);
     }
 
-    public void MoveEnemy()
+    public async Task MoveEnemyAsync()
     {
         foreach (BattleEnemy enemy in EnemyList)
         {
-            enemy.Move(player.gridPos, gridManager);
+            await enemy.MoveAsync(player.gridPos, gridManager);
         }
     }
+
 
     public void AttackEnemy()
     {
