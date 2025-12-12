@@ -25,6 +25,7 @@ public class BattleEnemyFactory
 
         var go = GameObject.Instantiate(prefab);
         var enemy = go.GetComponent<BattleEnemy>();
+        enemy.SetPosition(pos);
 
         if (enemy == null)
         {

@@ -14,7 +14,7 @@ public class PlayerMove : MonoBehaviour
 
     public bool isActionLocked = false;
 
-    private Vector2Int gridPos;
+    public Vector2Int gridPos;
     private Vector3 targetPos;
     private bool isMoving = false;
     private bool canMove = false;
