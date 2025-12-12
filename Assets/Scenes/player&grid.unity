@@ -203,9 +203,9 @@ MonoBehaviour:
   buttonContainer: {fileID: 1169379195}
   remainEnemyCountText: {fileID: 1445908444}
   waveCountText: {fileID: 1428658024}
-  attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
+  attackPointIconsPrefab: {fileID: 1285516935}
   buttonPrefabs:
-  - {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
+  - {fileID: 3537584245998133698, guid: 2c92acc8f78f8c44fac5cf9756884100, type: 3}
   - {fileID: 3537584245998133698, guid: 89ed9af213fcaa341bc000241dc5167f, type: 3}
   - {fileID: 3537584245998133698, guid: f4ced6a86ce40b545a88b2541468c1d4, type: 3}
   - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}

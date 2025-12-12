@@ -104,6 +104,10 @@ public class UIManager : MonoBehaviour
             () => commandController.OnSpecialAttackSelected());
     }
 
+    private void TrapSet()
+    {
+
+    }
     private void CreateContainerButtons()
     {
         CreateContainerButton(buttonPrefabs[0], "移動", () => commandController.OnEndSelected());
@@ -170,6 +174,7 @@ public class UIManager : MonoBehaviour
 
         playerMove.CancelMove();
         turnController.EndPlayerTurn();
+        commandController.OnEndSelected();
     }
 
     private void OnAttackButtonClicked()
@@ -178,6 +183,7 @@ public class UIManager : MonoBehaviour
 
         playerMove.CancelMove();
         ShowAttackMenu();
+        commandController.OnAttackSelected();
     }
 
     private void OnTrapButtonClicked()
@@ -185,6 +191,7 @@ public class UIManager : MonoBehaviour
         if (!ValidatePlayerTurn()) return;
 
         playerMove.CancelMove();
+        TrapSet();
         commandController.OnSetTrapSelected();
     }
 
