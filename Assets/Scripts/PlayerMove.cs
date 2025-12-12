@@ -128,7 +128,7 @@ public class PlayerMove : MonoBehaviour
     {
         canMove = true;
         ShowMovableTiles();
-        Debug.Log("移動モード有効化");
+        Debug.Log("移動範囲表示");
     }
 
     public void CancelMove()
@@ -167,7 +167,7 @@ public class PlayerMove : MonoBehaviour
                 allTiles[x, y].SetMovableColor(false);
             }
         }
-        Debug.Log("移動モード無効化");
+        Debug.Log("移動範囲非表示");
     }
 
     private void TryMoveToMouseClick()

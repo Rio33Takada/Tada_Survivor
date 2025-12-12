@@ -18,8 +18,7 @@ public class TurnController : MonoBehaviour
     public void EndPlayerTurn()
     {
         if (!IsPlayerTurn) return;
-
-        Debug.Log("プレイヤーターン終了");
+        Debug.Log("プレイヤーターン終了 → 敵ターンへ");
         StartEnemyTurn();
     }
 
