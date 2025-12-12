@@ -1,0 +1,102 @@
+using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class TextType : MonoBehaviour
+{
+    public Text messageText;
+    public float TypeSpeed = 0.04f; //表示速度
+    //public float fadetime = 1f;
+    //public Image fadeimage;
+    private bool isTyping;
+    private bool isTyped;
+    [SerializeField]
+    private int currentIndex = 0;
+    private string[] message =
+    {
+        //\nで改行
+        "0:表示する文字----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------▽",
+        "1:ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ▽",
+        "2:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------▽",
+        "3:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------▽",
+        "4:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------▽",
+        "5:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------▽",
+        "",
+    };
+
+    //タイトルのボタンが押されたら
+    public void StartButton()
+    {
+        StartCoroutine(TypeText(message[currentIndex]));
+        currentIndex++;
+    }
+
+    //テキスト表示処理
+    IEnumerator TypeText(string fullText)
+    {
+        isTyping = true;
+        isTyped = false;
+
+        messageText.text = "";
+        foreach (char c in fullText)
+        {
+            messageText.text += c;
+            yield return new WaitForSeconds(TypeSpeed);
+        }
+
+        isTyped = true;
+        isTyping = false;
+    }
+
+    //フェードアウト
+    //public IEnumerator FadeOut()
+    //{
+    //    float t = 0;
+    //    Color fadeC = fadeimage.color;
+
+    //    while (t < fadetime) 
+    //    {
+    //        t += Time.deltaTime;
+    //        fadeC.a = Mathf.Lerp(1f, 0f, t / fadetime);
+    //        fadeimage.color = fadeC;
+    //        yield return null;
+    //    }
+    //}
+
+    void Update()
+    {
+        if ((currentIndex <= 6))
+        {
+            //早送り
+            if (isTyping == true && isTyped == false)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    TypeSpeed = 0f;
+                }
+            }
+            //次の文へ
+            else
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    TypeSpeed = 0.04f;
+                    StartCoroutine(TypeText(message[currentIndex]));
+                    currentIndex++;
+                }
+            }
+        }
+        else
+        {
+            StartCoroutine(delay());
+        }
+
+        IEnumerator delay()
+        {
+            yield return new WaitForSeconds(1f);
+            SceneManager.LoadScene("MapScene");
+        }
+    }
+}
