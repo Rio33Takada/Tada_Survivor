@@ -143,7 +143,6 @@ GameObject:
   - component: {fileID: 299829454}
   - component: {fileID: 299829453}
   - component: {fileID: 299829452}
-  - component: {fileID: 299829455}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -248,20 +247,6 @@ MonoBehaviour:
   initialAttackPoint: 3
   initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 8b33268305c1ba146914e6bcc1018216, type: 2}
---- !u!114 &299829455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 299829449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3da5d5edbd0dc947ac38773d1c7ad65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Num: 1
-  GameoverButton: {fileID: 0}
 --- !u!4 &349951845 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3961403955963694807, guid: 2c81c8eb532c75246a81d83128d9b232, type: 3}
@@ -667,7 +652,7 @@ MonoBehaviour:
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
   gridManager: {fileID: 299829450}
-  trapPrefab: {fileID: 322088230173591821, guid: ccfb34c5c3bbeca43a7407f830335dd4, type: 3}
+  trapPrefab: {fileID: 919132149155446097, guid: 546dd97e3662a904eb6b5d1928d01155, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!1 &1169379194
 GameObject:
@@ -748,10 +733,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

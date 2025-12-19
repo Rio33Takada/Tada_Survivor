@@ -6,26 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
-    path: Assets/Scenes/TakadaTestScene.unity
-    guid: e7f733bbf25f8274f975b31a40869a17
+    path: Assets/Scenes/TitleScene.unity
+    guid: ca0fd44199746d94f98494de977706c4
   - enabled: 1
     path: Assets/Scenes/MapScene.unity
     guid: 40f1b77550a37f94792a50485a81aaf4
-  - enabled: 1
-    path: Assets/Scenes/player&grid.unity
-    guid: 07960c74c2879a444b65ade92760a872
   - enabled: 1
     path: Assets/Scenes/Glassland_Map.unity
     guid: b120cf3fa168d2f4d8541cba24e56bb7
   - enabled: 1
     path: Assets/Scenes/Volcano_Map.unity
     guid: 51417dbf11367624ebdc08849e194f34
-  - enabled: 1
-    path: Assets/Scenes/TitleScene.unity
-    guid: ca0fd44199746d94f98494de977706c4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
