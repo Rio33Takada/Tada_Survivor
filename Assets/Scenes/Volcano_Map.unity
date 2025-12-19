@@ -260,7 +260,7 @@ MonoBehaviour:
   buttonContainer: {fileID: 1169379195}
   remainEnemyCountText: {fileID: 1445908444}
   waveCountText: {fileID: 1428658024}
-  attackPointIconsPrefab: {fileID: 1285516935}
+  attackPointIconsPrefab: {fileID: 5872102927104591709, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
   buttonPrefabs:
   - {fileID: 3537584245998133698, guid: 2c92acc8f78f8c44fac5cf9756884100, type: 3}
   - {fileID: 3537584245998133698, guid: 89ed9af213fcaa341bc000241dc5167f, type: 3}
@@ -272,7 +272,7 @@ MonoBehaviour:
   endButtonPos: {x: 600, y: -200}
   normalAttackButtonPos: {x: 600, y: -100}
   specialAttackButtonPos: {x: 600, y: -200}
-  attackPointIconsPos: {x: -650, y: -350}
+  attackPointIconsPos: {x: -800, y: -380}
 --- !u!114 &299829454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,6 +288,7 @@ MonoBehaviour:
   uiManager: {fileID: 299829453}
   gridManager: {fileID: 299829450}
   turnController: {fileID: 299829452}
+  commandController: {fileID: 975643126}
   player: {fileID: 530873857}
   initialAttackPoint: 3
   initialMovePoint: 5
@@ -417,7 +418,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1432325422527430320, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
   m_PrefabInstance: {fileID: 1310171388}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92fad7d13544fb947a99b36ee2d0827f, type: 3}
@@ -428,6 +429,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7850102976434838014, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
   m_PrefabInstance: {fileID: 1310171388}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &975643125 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+  m_PrefabInstance: {fileID: 1310171388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &975643126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ae7ec49aa43204685a45ae0e414e0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMove: {fileID: 530873857}
+  turnController: {fileID: 299829452}
+  gridManager: {fileID: 299829450}
+  trapPrefab: {fileID: 322088230173591821, guid: ccfb34c5c3bbeca43a7407f830335dd4, type: 3}
+  selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!1 &1055606062
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,7 +793,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7850102976434838014, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1055606065}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 975643126}
   m_SourcePrefab: {fileID: 100100000, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
 --- !u!114 &1412542189 stripped
 MonoBehaviour:
