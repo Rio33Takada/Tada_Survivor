@@ -268,10 +268,10 @@ MonoBehaviour:
   - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}
   - {fileID: 3537584245998133698, guid: 12a60ff8bb2329a4c89d008ba3ae32d5, type: 3}
   attackButtonPos: {x: 600, y: 0}
-  trapButtonPos: {x: 600, y: -100}
-  endButtonPos: {x: 600, y: -200}
-  normalAttackButtonPos: {x: 600, y: -100}
-  specialAttackButtonPos: {x: 600, y: -200}
+  trapButtonPos: {x: 600, y: -200}
+  endButtonPos: {x: 600, y: -400}
+  normalAttackButtonPos: {x: 600, y: -150}
+  specialAttackButtonPos: {x: 600, y: -350}
   attackPointIconsPos: {x: -800, y: -380}
 --- !u!114 &299829454
 MonoBehaviour:
@@ -292,6 +292,7 @@ MonoBehaviour:
   player: {fileID: 530873857}
   initialAttackPoint: 3
   initialMovePoint: 5
+  enemyPrefabHolder: {fileID: 11400000, guid: 8b33268305c1ba146914e6bcc1018216, type: 2}
 --- !u!1001 &505518558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1018,14 +1019,14 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.9056604, g: 0.79948467, b: 0.6963332, a: 1}
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1058,12 +1059,12 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
+  m_ColorTemperature: 4500
+  m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
@@ -1081,13 +1082,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1461421636}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.40569454, y: -0.2348838, z: 0.10870549, w: 0.8765984}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 49.67, y: -30, z: 0}
 --- !u!4 &1849312836 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3961403955963694807, guid: 2c81c8eb532c75246a81d83128d9b232, type: 3}
