@@ -130,10 +130,9 @@ GameObject:
   - component: {fileID: 299829451}
   - component: {fileID: 299829450}
   - component: {fileID: 299829454}
-  - component: {fileID: 299829453}
   - component: {fileID: 299829452}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -183,15 +182,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc80c5f1943ea1d47bbe22afee4187ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 299829453}
+  uiManager: {fileID: 632727691}
   enemyTurnDuration: 1.5
---- !u!114 &299829453
+--- !u!114 &299829454
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 299829449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59408fdc5e54c3c41a01d4b21279622b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiManager: {fileID: 632727691}
+  gridManager: {fileID: 299829450}
+  turnController: {fileID: 299829452}
+  commandController: {fileID: 684568143}
+  player: {fileID: 530873857}
+  initialAttackPoint: 3
+  initialMovePoint: 5
+--- !u!114 &530873857 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1432325422527430320, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+  m_PrefabInstance: {fileID: 1310171388}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648622641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92fad7d13544fb947a99b36ee2d0827f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &632727690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 632727692}
+  - component: {fileID: 632727691}
+  m_Layer: 0
+  m_Name: UIManeger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &632727691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632727690}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f458a8e3739e2294face71ddcc01bec4, type: 3}
@@ -216,40 +262,48 @@ MonoBehaviour:
   normalAttackButtonPos: {x: 600, y: -100}
   specialAttackButtonPos: {x: 600, y: -200}
   attackPointIconsPos: {x: -650, y: -350}
---- !u!114 &299829454
-MonoBehaviour:
+--- !u!4 &632727692
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 299829449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59408fdc5e54c3c41a01d4b21279622b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiManager: {fileID: 299829453}
-  gridManager: {fileID: 299829450}
-  turnController: {fileID: 299829452}
-  player: {fileID: 530873857}
-  initialAttackPoint: 3
-  initialMovePoint: 5
---- !u!114 &530873857 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1432325422527430320, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+  m_GameObject: {fileID: 632727690}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &648622641 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
   m_PrefabInstance: {fileID: 1310171388}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92fad7d13544fb947a99b36ee2d0827f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &684568139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7850102976434838014, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
   m_PrefabInstance: {fileID: 1310171388}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &684568143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648622641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ae7ec49aa43204685a45ae0e414e0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMove: {fileID: 530873857}
+  turnController: {fileID: 299829452}
+  gridManager: {fileID: 299829450}
+  trapPrefab: {fileID: 322088230173591821, guid: ccfb34c5c3bbeca43a7407f830335dd4, type: 3}
+  selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!1 &1055606062
 GameObject:
   m_ObjectHideFlags: 0
@@ -591,7 +645,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7850102976434838014, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1055606065}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 684568143}
   m_SourcePrefab: {fileID: 100100000, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
 --- !u!1 &1428658022
 GameObject:
@@ -958,6 +1015,7 @@ SceneRoots:
   - {fileID: 1461421639}
   - {fileID: 1310171388}
   - {fileID: 299829451}
+  - {fileID: 632727692}
   - {fileID: 1169379195}
   - {fileID: 1285516939}
   - {fileID: 2004427934}

@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GridManager gridManager;
     [SerializeField] private TurnController turnController;
+    [SerializeField] private CommandController commandController; // ← 追加
 
     [Header("Player")]
     [SerializeField] private PlayerMove player;
@@ -37,6 +38,8 @@ public class GameManager : MonoBehaviour
             Debug.LogError("UIManager が設定されていません。");
         if (turnController == null)
             Debug.LogError("TurnController が設定されていません。");
+        if (commandController == null)
+            Debug.LogError("CommandController が設定されていません。"); 
         if (player == null)
             Debug.LogError("PlayerMove が設定されていません。");
     }
@@ -68,7 +71,7 @@ public class GameManager : MonoBehaviour
     {
         if (uiManager != null)
         {
-            uiManager.InitializeUI(this);
+            uiManager.InitializeUI(this, commandController); // ← 修正！UI に CommandController を渡す
         }
 
         if (turnController != null)
