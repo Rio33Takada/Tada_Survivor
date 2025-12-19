@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeStats()
     {
+        RestorePoints();
         AttackPoint = initialAttackPoint;
         MovePoint = initialMovePoint;
         WaveCount = 0;
