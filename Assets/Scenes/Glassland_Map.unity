@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: 299829454}
   - component: {fileID: 299829453}
   - component: {fileID: 299829452}
+  - component: {fileID: 299829455}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -222,10 +223,10 @@ MonoBehaviour:
   - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}
   - {fileID: 3537584245998133698, guid: 12a60ff8bb2329a4c89d008ba3ae32d5, type: 3}
   attackButtonPos: {x: 600, y: 0}
-  trapButtonPos: {x: 600, y: -100}
-  endButtonPos: {x: 600, y: -200}
-  normalAttackButtonPos: {x: 600, y: -100}
-  specialAttackButtonPos: {x: 600, y: -200}
+  trapButtonPos: {x: 600, y: -200}
+  endButtonPos: {x: 600, y: -400}
+  normalAttackButtonPos: {x: 600, y: -150}
+  specialAttackButtonPos: {x: 600, y: -350}
   attackPointIconsPos: {x: -800, y: -380}
 --- !u!114 &299829454
 MonoBehaviour:
@@ -247,6 +248,20 @@ MonoBehaviour:
   initialAttackPoint: 3
   initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 8b33268305c1ba146914e6bcc1018216, type: 2}
+--- !u!114 &299829455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299829449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3da5d5edbd0dc947ac38773d1c7ad65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Num: 1
+  GameoverButton: {fileID: 0}
 --- !u!4 &349951845 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3961403955963694807, guid: 2c81c8eb532c75246a81d83128d9b232, type: 3}

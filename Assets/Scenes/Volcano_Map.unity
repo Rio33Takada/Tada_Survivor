@@ -339,7 +339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3961403955963694807, guid: 2c81c8eb532c75246a81d83128d9b232, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -485
+      value: -537
       objectReference: {fileID: 0}
     - target: {fileID: 3961403955963694807, guid: 2c81c8eb532c75246a81d83128d9b232, type: 3}
       propertyPath: m_LocalPosition.z
@@ -450,7 +450,7 @@ MonoBehaviour:
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
   gridManager: {fileID: 299829450}
-  trapPrefab: {fileID: 322088230173591821, guid: ccfb34c5c3bbeca43a7407f830335dd4, type: 3}
+  trapPrefab: {fileID: 919132149155446097, guid: 546dd97e3662a904eb6b5d1928d01155, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!1 &1055606062
 GameObject:
