@@ -21,7 +21,11 @@ public class BattleEnemyController
 
     public void AddEnemy(BattleEnemy enemy)
     {
-        if (enemy == null) Debug.LogError("enemy is null");
+        if (enemy == null)
+        {
+            Debug.LogError("enemy is null");
+            return;
+        }
         EnemyList.Add(enemy);
     }
 
