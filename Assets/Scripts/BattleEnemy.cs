@@ -11,45 +11,6 @@ public enum EnemyType
     bomber,
 }
 
-[CreateAssetMenu(fileName = "EnemyPrefabHolder", menuName = "Game/Enemy Prefab Holder")]
-public class EnemyPrefabHolder : ScriptableObject
-{
-    [Serializable]
-    public class EnemyPrefabPair
-    {
-        public EnemyType type;
-        public GameObject prefab;
-    }
-
-    [SerializeField]
-    private List<EnemyPrefabPair> enemyPrefabs = new List<EnemyPrefabPair>();
-
-    private Dictionary<EnemyType, GameObject> prefabDictionary;
-
-    public GameObject GetPrefab(EnemyType type)
-    {
-        if (prefabDictionary == null)
-        {
-            prefabDictionary = new Dictionary<EnemyType, GameObject>();
-            foreach (var pair in enemyPrefabs)
-            {
-                if (!prefabDictionary.ContainsKey(pair.type))
-                {
-                    prefabDictionary.Add(pair.type, pair.prefab);
-                }
-            }
-        }
-
-        if (prefabDictionary.TryGetValue(type, out var prefab))
-        {
-            return prefab;
-        }
-
-        Debug.LogError($"EnemyType {type} ‚Ì Prefab ‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
-        return null;
-    }
-}
-
 namespace takada
 {
     public abstract class BattleEnemy : MonoBehaviour
@@ -82,9 +43,8 @@ namespace takada
             transform.position = new Vector3(pos.x, 0, pos.y);
         }
 
-        public virtual async Task MoveAsync(Vector2Int playerPos, GridManager gridManager)
+        private List<Vector2Int> GetPath(GridManager grid, Vector2Int playerPos)
         {
-            GridManager grid = gridManager;
             Pathfinding pathfinder = new Pathfinding(grid);
 
             List<Vector2Int> goals = new List<Vector2Int>();
@@ -93,7 +53,7 @@ namespace takada
             {
                 Vector2Int pos = playerPos + d;
                 goals.Add(pos);
-                if (GridPosition == pos) return;
+                if (GridPosition == pos) return null;
             }
 
             List<Vector2Int> bestPath = null;
@@ -109,15 +69,45 @@ namespace takada
                 }
             }
 
-            if (bestPath == null || bestPath.Count < 2) return;
+            if (bestPath == null || bestPath.Count < 2) return null;
+
+            return bestPath;
+        }
+
+        public virtual async Task MoveAsync(Vector2Int playerPos, GridManager grid)
+        {
+            var bestPath = GetPath(grid, playerPos);
+            if (bestPath == null) return;
 
             Vector2Int nextPos = bestPath[1];
 
-            Tile nextTile = grid.GetTileAt(nextPos);
+            Vector3 targetWorldPos = grid.GetTileAt(nextPos).transform.position;
 
-            await AnimationMoveAsync(nextTile.transform.position);
+            Vector3 moveDir = (targetWorldPos - transform.position);
+            moveDir.y = 0f;
+            await AnimationRotateAsync(moveDir);
+
+            await AnimationMoveAsync(targetWorldPos);
 
             SetPosition(nextPos);
+
+            bestPath = GetPath(grid, playerPos);
+            if (bestPath == null)
+                moveDir = new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
+            else
+            {
+                targetWorldPos = grid.GetTileAt(nextPos).transform.position;
+                moveDir = (targetWorldPos - transform.position);
+            }
+
+            await AnimationRotateAsync(moveDir);
+        }
+
+        public Task AnimationRotateAsync(Vector3 forward)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            StartCoroutine(RotateCoroutine(forward, tcs));
+            return tcs.Task;
         }
 
         public Task AnimationMoveAsync(Vector3 targetPos)
@@ -147,6 +137,34 @@ namespace takada
 
             transform.position = targetPos;
 
+            tcs.SetResult(true);
+        }
+
+        private IEnumerator RotateCoroutine(Vector3 forward, TaskCompletionSource<bool> tcs)
+        {
+            if (forward == Vector3.zero)
+            {
+                tcs.SetResult(true);
+                yield break;
+            }
+
+            Quaternion startRot = transform.rotation;
+            Quaternion targetRot = Quaternion.LookRotation(forward);
+
+            float duration = 0.15f;
+            float time = 0f;
+
+            while (time < duration)
+            {
+                time += Time.deltaTime;
+                float t = Mathf.Clamp01(time / duration);
+                t = Mathf.SmoothStep(0, 1, t);
+
+                transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+                yield return null;
+            }
+
+            transform.rotation = targetRot;
             tcs.SetResult(true);
         }
 
