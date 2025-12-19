@@ -42,12 +42,21 @@ public class BattleEnemyController
         }
     }
 
-
     public void AttackEnemy()
     {
         foreach (BattleEnemy enemy in EnemyList)
         {
             enemy.Attack(player.gridPos);
+        }
+    }
+
+    public void DamageEnemy(List<GameObject> enemies)
+    {
+        foreach(GameObject enemy in enemies)
+        {
+            var be = enemy.GetComponent<BattleEnemy>();
+            EnemyList.Remove(be);
+            be.TakeDamage(1);
         }
     }
 }

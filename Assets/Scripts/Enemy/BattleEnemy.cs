@@ -180,6 +180,7 @@ namespace takada
         public virtual void Death()
         {
             Debug.Log($"{this.name}‚ÍŽ€‚ñ‚¾");
+            Destroy(gameObject);
         }
 
         public virtual void Attack(Vector2Int playerPos)
