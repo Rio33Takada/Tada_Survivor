@@ -25,13 +25,14 @@ public class BattleEnemyFactory
 
         var go = GameObject.Instantiate(prefab);
         var enemy = go.GetComponent<BattleEnemy>();
-        enemy.SetPosition(pos);
 
         if (enemy == null)
         {
             Debug.LogError($"{type} のPrefab に BattleEnemy がアタッチされていません");
             return;
         }
+
+        enemy.SetPosition(pos);
 
         enemyController.AddEnemy(enemy);
     }

@@ -155,12 +155,16 @@ MonoBehaviour:
   remainEnemyCountText: {fileID: 2030904320}
   waveCountText: {fileID: 604562950}
   attackPointIconsPrefab: {fileID: 782812175347748541, guid: 03989aca883980e438c189faac31fac3, type: 3}
-  buttonPrefab: {fileID: 3537584245998133698, guid: a5c4ab50a54184a4fbcaae18e4ddb907, type: 3}
-  attackPointIconsPos: {x: -800, y: -400}
-  AttackButtonPos: {x: 500, y: -400}
-  trapButtonPos: {x: 650, y: -400}
-  EndButtonPos: {x: 800, y: -400}
-  movePointCountDownPrefab: {fileID: 0}
+  buttonPrefabs:
+  - {fileID: 3537584245998133698, guid: 2c92acc8f78f8c44fac5cf9756884100, type: 3}
+  - {fileID: 3537584245998133698, guid: 89ed9af213fcaa341bc000241dc5167f, type: 3}
+  - {fileID: 3537584245998133698, guid: f4ced6a86ce40b545a88b2541468c1d4, type: 3}
+  attackButtonPos: {x: 600, y: 0}
+  trapButtonPos: {x: 600, y: -100}
+  endButtonPos: {x: 600, y: -200}
+  normalAttackButtonPos: {x: 600, y: -100}
+  specialAttackButtonPos: {x: 600, y: -200}
+  attackPointIconsPos: {x: -650, y: -350}
 --- !u!4 &197780718
 Transform:
   m_ObjectHideFlags: 0
@@ -744,6 +748,8 @@ MonoBehaviour:
   gridManager: {fileID: 1677311833}
   turnController: {fileID: 1677311834}
   player: {fileID: 2137073725}
+  initialAttackPoint: 3
+  initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 0777c5a0748f1704e8de9a60427bade7, type: 2}
 --- !u!4 &1677311832
 Transform:
@@ -790,6 +796,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 197780717}
+  enemyTurnDuration: 1.5
 --- !u!1 &1786587433
 GameObject:
   m_ObjectHideFlags: 0

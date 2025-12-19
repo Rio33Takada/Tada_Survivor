@@ -3,19 +3,25 @@ using UnityEngine;
 
 public class Bomber : BattleEnemy
 {
-    public override int MaxHp => 1;
-
-    public override void Move(Vector2Int playerPos, GridManager grid)
-    {
-        base.Move(playerPos, grid);
-    }
+    protected override int BaseMaxHp => 1;
 
     public override void Attack(Vector2Int playerPos)
     {
         foreach (var d in Dirs)
         {
             var pos = GridPosition + d;
-            if (pos == playerPos) ; // プレイヤーにダメージ.
+            if (pos == playerPos) Debug.Log("BomberはPlayerに攻撃した"); // プレイヤーにダメージ.
         }
+    }
+
+    public override void Death()
+    {
+        SetBomb();
+        base.Death();
+    }
+
+    private void SetBomb()
+    {
+        Debug.Log($"{this.name}は爆弾を残した");
     }
 }

@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public enum EnemyType
@@ -52,7 +54,8 @@ namespace takada
 {
     public abstract class BattleEnemy : MonoBehaviour
     {
-        public virtual int MaxHp { get; }
+        protected virtual int BaseMaxHp => 1;
+        public int MaxHp { get; private set; }
         public int Hp { get; private set; }
 
         public Vector2Int GridPosition { get; private set; }
@@ -67,14 +70,84 @@ namespace takada
             new Vector2Int(0,-1)
         };
 
-        void Awake()
+        protected virtual void Awake()
         {
+            MaxHp = BaseMaxHp;
             Hp = MaxHp;
         }
 
         public void SetPosition(Vector2Int pos)
         {
             GridPosition = pos;
+            transform.position = new Vector3(pos.x, 0, pos.y);
+        }
+
+        public virtual async Task MoveAsync(Vector2Int playerPos, GridManager gridManager)
+        {
+            GridManager grid = gridManager;
+            Pathfinding pathfinder = new Pathfinding(grid);
+
+            List<Vector2Int> goals = new List<Vector2Int>();
+
+            foreach (var d in Dirs)
+            {
+                Vector2Int pos = playerPos + d;
+                goals.Add(pos);
+                if (GridPosition == pos) return;
+            }
+
+            List<Vector2Int> bestPath = null;
+            int bestCost = int.MaxValue;
+
+            foreach (var g in goals)
+            {
+                List<Vector2Int> path = pathfinder.FindPath(GridPosition, g);
+                if (path != null && path.Count < bestCost)
+                {
+                    bestCost = path.Count;
+                    bestPath = path;
+                }
+            }
+
+            if (bestPath == null || bestPath.Count < 2) return;
+
+            Vector2Int nextPos = bestPath[1];
+
+            Tile nextTile = grid.GetTileAt(nextPos);
+
+            await AnimationMoveAsync(nextTile.transform.position);
+
+            SetPosition(nextPos);
+        }
+
+        public Task AnimationMoveAsync(Vector3 targetPos)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            StartCoroutine(AnimationCoroutine(targetPos, tcs));
+            return tcs.Task;
+        }
+
+        private IEnumerator AnimationCoroutine(Vector3 targetPos, TaskCompletionSource<bool> tcs)
+        {
+            float duration = 0.25f;
+            float time = 0f;
+
+            Vector3 startPos = transform.position;
+
+            while (time < duration)
+            {
+                time += Time.deltaTime;
+                float t = Mathf.Clamp01(time / duration);
+                t = Mathf.SmoothStep(0, 1, t);
+
+                transform.position = Vector3.Lerp(startPos, targetPos, t);
+
+                yield return null;
+            }
+
+            transform.position = targetPos;
+
+            tcs.SetResult(true);
         }
 
         public void TakeDamage(int amount)
@@ -86,56 +159,9 @@ namespace takada
             }
         }
 
-        public void Death()
+        public virtual void Death()
         {
-
-        }
-
-        public virtual void Move(Vector2Int playerPos, GridManager gridManager)
-        {
-            GridManager grid = gridManager;
-            Pathfinding pathfinder = new Pathfinding(grid);
-
-            // --- á@ ÉSÅ[ÉãåÛï‚ÅiÉvÉåÉCÉÑÅ[é¸àÕ4É}ÉXÅjÇéÊìæ ---
-            List<Vector2Int> goals = new List<Vector2Int>();
-
-            foreach (var d in Dirs)
-            {
-                Vector2Int pos = playerPos + d;
-                goals.Add(pos);
-                if (GridPosition == new Vector2Int(pos.x, pos.y)) return;
-            }
-
-            // --- áA äeÉSÅ[ÉãÇ…ëŒÇµÇƒ A* Çé¿çsÇµÇƒç≈íZåoòHÇëIÇ‘ ---
-            List<Vector2Int> bestPath = null;
-            int bestCost = int.MaxValue;
-
-            foreach (var g in goals)
-            {
-                List<Vector2Int> path = pathfinder.FindPath(GridPosition, g);
-
-                if (path != null && path.Count < bestCost)
-                {
-                    bestCost = path.Count;
-                    bestPath = path;
-                }
-            }
-
-            // --- áB åoòHÇ™å©Ç¬Ç©ÇÁÇ»Ç¢ ---
-            if (bestPath == null || bestPath.Count < 2) return;
-
-
-            // --- áC ç≈íZåoòHÇ…äÓÇ√Ç¢Çƒà⁄ìÆ ---
-            // bestPath[0] = åªç›ín, bestPath[1] = éüÇ…êiÇﬁà íu
-            Vector2Int nextPos = bestPath[1];
-            SetPosition(nextPos);
-
-            // ÉèÅ[ÉãÉhç¿ïWÇ÷îΩâf
-            Tile nextTile = grid.GetTileAt(nextPos);
-            if (nextTile != null)
-            {
-                transform.position = nextTile.transform.position;
-            }
+            Debug.Log($"{this.name}ÇÕéÄÇÒÇæ");
         }
 
         public virtual void Attack(Vector2Int playerPos)
