@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     BattleEnemyController battleEnemyController;
     [SerializeField] EnemyPrefabHolder enemyPrefabHolder;
+    [SerializeField] EnemySpawnHolder enemySpawn;
 
     private void Awake()
     {
@@ -60,8 +61,7 @@ public class GameManager : MonoBehaviour
         InitializeStats();
         InitializeManagers();
         InitializePlayer();
-        SpawnEnemy(6, 6);
-        SpawnEnemy(4, 8);
+        SpawnEnemy();
     }
 
     private void InitializeStats()
@@ -108,24 +108,26 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Wave {WaveCount} 開始");
     }
 
-    public void SpawnEnemy(int x, int y)
+    public void SpawnEnemy()
     {
-        Debug.Log($"敵を生成: ({x}, {y})");
-        // TODO: 敵生成ロジックを実装
-        EnemyType type = EnemyType.knight;
-        switch (type)
+        foreach (var es in enemySpawn.spawnList)
         {
-            case EnemyType.knight:
-                battleEnemyController.SpawnEnemy(EnemyType.knight, new Vector2Int(x, y));
-                break;
-            case EnemyType.archer:
-                battleEnemyController.SpawnEnemy(EnemyType.archer, new Vector2Int(x, y));
-                break;
-            case EnemyType.bomber:
-                battleEnemyController.SpawnEnemy(EnemyType.bomber, new Vector2Int(x, y));
-                break;
-            default:
-                return;
+            Debug.Log($"敵を生成: ({es.position.x}, {es.position.y})");
+            // TODO: 敵生成ロジックを実装
+            switch (es.enemyType)
+            {
+                case EnemyType.knight:
+                    battleEnemyController.SpawnEnemy(EnemyType.knight, es.position);
+                    break;
+                case EnemyType.archer:
+                    battleEnemyController.SpawnEnemy(EnemyType.archer, es.position);
+                    break;
+                case EnemyType.bomber:
+                    battleEnemyController.SpawnEnemy(EnemyType.bomber, es.position);
+                    break;
+                default:
+                    return;
+            }
         }
     }
 
