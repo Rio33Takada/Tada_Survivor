@@ -5,13 +5,17 @@ public class BattleEnemyFactory
 {
     private readonly EnemyPrefabHolder prefabHolder;
     private readonly BattleEnemyController enemyController;
+    private readonly GridManager gridManager;
 
     public BattleEnemyFactory(
         EnemyPrefabHolder prefabHolder,
-        BattleEnemyController enemyController)
+        BattleEnemyController enemyController,
+        GridManager grid
+        )
     {
         this.prefabHolder = prefabHolder;
         this.enemyController = enemyController;
+        this.gridManager = grid;
     }
 
     public void CreateBattleEnemy(EnemyType type, Vector2Int pos)
@@ -32,7 +36,7 @@ public class BattleEnemyFactory
             return;
         }
 
-        enemy.SetPosition(pos);
+        enemy.SetPosition(pos, gridManager);
 
         enemyController.AddEnemy(enemy);
     }

@@ -40,7 +40,7 @@ public class Pathfinding
             foreach (Vector2Int nextPos in GetNeighbors(current.position))
             {
                 Tile tile = grid.GetTileAt(nextPos);
-                if (tile == null || !tile.walkable) continue;
+                if (tile == null || !tile.Walkable) continue;
 
                 Node neighbor = new Node(nextPos, current, current.G + 1, GetHeuristic(nextPos, goal));
 
