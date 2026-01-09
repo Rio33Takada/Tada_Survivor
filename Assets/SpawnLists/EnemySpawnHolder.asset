@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: EnemySpawnHolder
   m_EditorClassIdentifier: 
   spawnList:
-  - position: {x: 0, y: 0}
-    enemyType: 0
-  - position: {x: 0, y: 0}
-    enemyType: 0
-  - position: {x: 0, y: 0}
-    enemyType: 0
-  - position: {x: 0, y: 0}
-    enemyType: 0
+  - position: {x: 6, y: 2}
+    enemyType: 2
+  - position: {x: 1, y: 5}
+    enemyType: 2
+  - position: {x: 4, y: 3}
+    enemyType: 2
+  - position: {x: 3, y: 0}
+    enemyType: 2

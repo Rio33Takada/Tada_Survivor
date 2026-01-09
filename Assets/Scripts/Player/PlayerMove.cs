@@ -147,7 +147,7 @@ public class PlayerMove : MonoBehaviour
             Vector2Int checkPos = gridPos + direction;
             Tile tile = gridManager.GetTileAt(checkPos);
 
-            if (tile != null && tile.walkable)
+            if (tile != null && tile.Walkable)
             {
                 tile.SetMovableColor(true);
             }

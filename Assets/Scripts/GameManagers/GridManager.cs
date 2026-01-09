@@ -48,9 +48,8 @@ public class GridManager : MonoBehaviour
                     tile = tileObj.AddComponent<Tile>();
 
                 tile.gridPosition = new Vector2Int(x, y);
-                tile.walkable = true;
-
                 grid[x, y] = tile;
+
             }
         }
 
@@ -101,7 +100,7 @@ public class GridManager : MonoBehaviour
     {
         Tile tile = GetTileAt(gridPosition);
         if (tile == null) return false;
-        return tile.walkable;
+        return tile.Walkable;
     }
 
     #endregion

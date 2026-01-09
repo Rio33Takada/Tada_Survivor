@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1432325422527430320}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,5 +124,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 0}
+  turnController: {fileID: 0}
   moveSpeed: 5
   yOffset: 0.5
+  doubleClickThreshold: 0.3
+  positionThreshold: 0.01
+  isActionLocked: 0
+  gridPos: {x: 0, y: 0}

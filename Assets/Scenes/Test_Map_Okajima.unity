@@ -293,6 +293,7 @@ MonoBehaviour:
   initialAttackPoint: 3
   initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 8b33268305c1ba146914e6bcc1018216, type: 2}
+  enemySpawn: {fileID: 11400000, guid: 11659e1dc51120940a4bf624f3c9402e, type: 2}
 --- !u!1001 &505518558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -449,7 +450,64 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
+  normalAttack: {fileID: 975643130}
+  specialAttack: {fileID: 975643131}
+  setTrap: {fileID: 975643133}
+--- !u!114 &975643130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 805a55e6366d81d41862537cd65b4aaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
+  playerMove: {fileID: 530873857}
+--- !u!114 &975643131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94af39d041b01fa4ebf73a94ee5441c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerStatus: {fileID: 975643132}
+--- !u!114 &975643132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62d32f9b879334a4085958c92dcdf6e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSP: 5
+  currentSP: 0
+--- !u!114 &975643133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975643125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ffa7eee66d98a148b022dd3e7d399ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridManager: {fileID: 299829450}
+  turnController: {fileID: 299829452}
   trapPrefab: {fileID: 919132149155446097, guid: 546dd97e3662a904eb6b5d1928d01155, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!1 &1055606062
@@ -798,6 +856,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 975643126}
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 975643133}
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 975643132}
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 975643131}
+    - targetCorrespondingSourceObject: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 975643130}
   m_SourcePrefab: {fileID: 100100000, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
 --- !u!114 &1412542189 stripped
 MonoBehaviour:
