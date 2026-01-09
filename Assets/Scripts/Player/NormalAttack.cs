@@ -6,11 +6,9 @@ public class NormalAttack : MonoBehaviour
 
     public void Execute()
     {
-        Debug.Log($"{LOG_PREFIX} Executing Normal Attack");
+        Debug.Log($"{LOG_PREFIX} 通常攻撃");
 
-        // TODO:
-        // ・攻撃範囲表示
-        // ・敵選択
-        // ・ダメージ計算
+        // SP消費なし
+        // ダメージ処理などをここに
     }
 }

@@ -28,6 +28,7 @@ public class SetTrap : MonoBehaviour
 
         CalculatePositions();
         HighlightTiles();
+
     }
 
     public void Tick()
@@ -92,7 +93,10 @@ public class SetTrap : MonoBehaviour
         Debug.Log($"{LOG_PREFIX} Trap Placed {gridPos}");
 
         Cancel();
-        turnController.EndPlayerTurn();
+        if (turnController != null)
+        {
+            turnController.EndPlayerTurn();
+        }
     }
 
     private void Cancel()
