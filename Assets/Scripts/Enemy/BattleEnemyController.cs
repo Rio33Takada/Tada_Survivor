@@ -12,7 +12,6 @@ public class BattleEnemyController
 
     public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder, PlayerMove player)
     {
-        enemyFactory = new BattleEnemyFactory(holder, this);
         enemyFactory = new BattleEnemyFactory(holder, this, grid);
         gridManager = grid;
         this.player = player;
