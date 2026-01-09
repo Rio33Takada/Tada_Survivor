@@ -27,6 +27,8 @@ public class BattleEnemyController
             return;
         }
         EnemyList.Add(enemy);
+
+        enemy.OnDeath += HandleEnemyDeath;
     }
 
     public void SpawnEnemy(EnemyType type, Vector2Int pos)
@@ -56,8 +58,12 @@ public class BattleEnemyController
         foreach(GameObject enemy in enemies)
         {
             var be = enemy.GetComponent<BattleEnemy>();
-            EnemyList.Remove(be);
             be.TakeDamage(1);
         }
+    }
+
+    private void HandleEnemyDeath(BattleEnemy enemy)
+    {
+        EnemyList.Remove(enemy);
     }
 }

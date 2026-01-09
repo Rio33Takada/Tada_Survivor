@@ -31,6 +31,8 @@ namespace takada
             new Vector2Int(0,-1)
         };
 
+        public event System.Action<BattleEnemy> OnDeath;
+
         protected virtual void Awake()
         {
             MaxHp = BaseMaxHp;
@@ -79,7 +81,13 @@ namespace takada
         public virtual async Task MoveAsync(Vector2Int playerPos, GridManager grid)
         {
             var bestPath = GetPath(grid, playerPos);
-            if (bestPath == null) return;
+            if (bestPath == null) 
+            {
+                Vector3 lookDir = new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
+
+                await AnimationRotateAsync(lookDir);
+                return;
+            }
 
             Vector2Int nextPos = bestPath[1];
 
@@ -182,6 +190,9 @@ namespace takada
         public virtual void Death()
         {
             Debug.Log($"{this.name}‚ÍŽ€‚ñ‚¾");
+
+            OnDeath?.Invoke( this );
+
             Destroy(gameObject);
         }
 
