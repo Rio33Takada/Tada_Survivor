@@ -37,9 +37,11 @@ namespace takada
             Hp = MaxHp;
         }
 
-        public void SetPosition(Vector2Int pos)
+        public void SetPosition(Vector2Int pos, GridManager grid)
         {
+            grid.GetTileAt(GridPosition).SetOccupantObject(null);
             GridPosition = pos;
+            grid.GetTileAt(GridPosition).SetOccupantObject(gameObject);
             transform.position = new Vector3(pos.x, 0, pos.y);
         }
 
@@ -89,7 +91,7 @@ namespace takada
 
             await AnimationMoveAsync(targetWorldPos);
 
-            SetPosition(nextPos);
+            SetPosition(nextPos, grid);
 
             bestPath = GetPath(grid, playerPos);
             if (bestPath == null)
@@ -180,6 +182,7 @@ namespace takada
         public virtual void Death()
         {
             Debug.Log($"{this.name}‚ÍŽ€‚ñ‚¾");
+            Destroy(gameObject);
         }
 
         public virtual void Attack(Vector2Int playerPos)

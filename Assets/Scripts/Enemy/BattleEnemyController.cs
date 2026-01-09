@@ -13,6 +13,7 @@ public class BattleEnemyController
     public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder, PlayerMove player)
     {
         enemyFactory = new BattleEnemyFactory(holder, this);
+        enemyFactory = new BattleEnemyFactory(holder, this, grid);
         gridManager = grid;
         this.player = player;
 
@@ -48,6 +49,16 @@ public class BattleEnemyController
         foreach (BattleEnemy enemy in EnemyList)
         {
             enemy.Attack(player.gridPos);
+        }
+    }
+
+    public void DamageEnemy(List<GameObject> enemies)
+    {
+        foreach(GameObject enemy in enemies)
+        {
+            var be = enemy.GetComponent<BattleEnemy>();
+            EnemyList.Remove(be);
+            be.TakeDamage(1);
         }
     }
 }
