@@ -160,7 +160,7 @@ public class UIManager : MonoBehaviour
             () => commandController.OnEndSelected());
 
         CreateContainerButton(buttonPrefabs[BUTTON_INDEX_ATTACK], "攻撃",
-            () => commandController.OnAttackSelected());
+            () => commandController.OnNomalAttackSelected());
 
         CreateContainerButton(buttonPrefabs[BUTTON_INDEX_TRAP], "トラップ",
             () => commandController.OnSetTrapSelected());
@@ -235,7 +235,7 @@ public class UIManager : MonoBehaviour
 
     private void OnAttackButtonClicked()
     {
-        commandController.OnAttackSelected();
+        commandController.OnNomalAttackSelected();
         ShowAttackMenu();
     }
 
