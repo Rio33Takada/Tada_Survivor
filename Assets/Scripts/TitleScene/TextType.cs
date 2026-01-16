@@ -100,7 +100,7 @@ public class TextType : MonoBehaviour
         IEnumerator delay()
         {
             yield return new WaitForSeconds(1f);
-            SceneManager.LoadScene("MapScene");
+            SceneManager.LoadScene("HowToPlayScene");
         }
     }
 }

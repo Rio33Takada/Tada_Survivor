@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Volcano_Map.unity
     guid: 51417dbf11367624ebdc08849e194f34
+  - enabled: 1
+    path: Assets/Scenes/HowToPlayScene.unity
+    guid: da2b4fa3079de1342b7ea27099403a2c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
