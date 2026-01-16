@@ -10,7 +10,11 @@ public class Bomber : BattleEnemy
         foreach (var d in Dirs)
         {
             var pos = GridPosition + d;
-            if (pos == playerPos) Debug.Log("BomberはPlayerに攻撃した"); // プレイヤーにダメージ.
+            if (pos == playerPos) 
+            {
+                Debug.Log("BomberはPlayerに攻撃した"); // プレイヤーにダメージ.
+                player.TakeDamage(1);
+            }
         }
     }
 
