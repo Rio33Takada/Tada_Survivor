@@ -93,6 +93,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 636606197543093963, guid: 245d441294173ce4293f05d45245742d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 91f9b8400db7dc741a14c652439e3c31, type: 2}
     - target: {fileID: 919132149155446097, guid: 245d441294173ce4293f05d45245742d, type: 3}
       propertyPath: m_Name
       value: bomb_body
