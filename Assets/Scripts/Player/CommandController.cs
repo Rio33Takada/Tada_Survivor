@@ -30,7 +30,13 @@ public class CommandController : MonoBehaviour
         playerMove.CancelMove();
         turnController.EndPlayerTurn();
     }
+    public void OnAttackMenuSelected()
+    {
+        if (!ValidatePlayerTurn()) return;
 
+        Debug.Log($"{LOG_PREFIX} Attack Menu Selected");
+        playerMove.CancelMove();
+    }
     public void OnNomalAttackSelected()
     {
         if (!ValidatePlayerTurn()) return;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -11,8 +12,13 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float yOffset = 0.5f;
     [SerializeField] private float doubleClickThreshold = 0.3f;
     [SerializeField] private float positionThreshold = 0.01f;
+    [SerializeField] private int moveRange = 1;
 
     public bool isActionLocked = false;
+
+    private HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
+    private Queue<Vector2Int> movePath = new Queue<Vector2Int>();
+
 
     public Vector2Int gridPos;
     private Vector3 targetPos;
@@ -80,6 +86,13 @@ public class PlayerMove : MonoBehaviour
     private void OnMoveComplete()
     {
         isMoving = false;
+
+        if (movePath.Count > 0)
+        {
+            MoveNextStep();
+            return;
+        }
+
         canMove = false;
         ClearMovableTiles();
 
@@ -90,6 +103,7 @@ public class PlayerMove : MonoBehaviour
             turnController.EndPlayerTurn();
         }
     }
+
 
     private bool CanAcceptInput()
     {
@@ -138,24 +152,94 @@ public class PlayerMove : MonoBehaviour
         ClearMovableTiles();
     }
 
+    private void BuildStraightPath(Vector2Int target)
+    {
+        movePath.Clear();
+
+        Vector2Int current = gridPos;
+
+        // ① 縦方向を先に合わせる
+        while (current.y != target.y)
+        {
+            current += current.y < target.y ? Vector2Int.up : Vector2Int.down;
+            movePath.Enqueue(current);
+        }
+
+        // ② 横方向を合わせる
+        while (current.x != target.x)
+        {
+            current += current.x < target.x ? Vector2Int.right : Vector2Int.left;
+            movePath.Enqueue(current);
+        }
+    }
+
+
     private void ShowMovableTiles()
     {
         ClearMovableTiles();
+        reachableTiles.Clear();
 
-        foreach (Vector2Int direction in MOVE_DIRECTIONS)
+        Queue<(Vector2Int pos, int cost)> queue = new Queue<(Vector2Int, int)>();
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+        queue.Enqueue((gridPos, 0));
+        visited.Add(gridPos);
+
+        while (queue.Count > 0)
         {
-            Vector2Int checkPos = gridPos + direction;
-            Tile tile = gridManager.GetTileAt(checkPos);
+            var (currentPos, cost) = queue.Dequeue();
+            if (cost >= moveRange) continue;
 
-            if (tile != null && tile.Walkable)
+            foreach (Vector2Int dir in MOVE_DIRECTIONS)
             {
+                Vector2Int nextPos = currentPos + dir;
+                if (visited.Contains(nextPos)) continue;
+
+                Tile tile = gridManager.GetTileAt(nextPos);
+                if (tile == null) continue;
+
+                // ★ ここが重要（敵・物がいるマスを除外）
+                if (!tile.Walkable) continue;
+
                 tile.SetMovableColor(true);
+                reachableTiles.Add(nextPos);
+
+                visited.Add(nextPos);
+                queue.Enqueue((nextPos, cost + 1));
             }
         }
     }
 
+    public void MoveNextStep()
+    {
+        if (movePath.Count == 0) return;
+
+        if (!isMoving && turnController != null)
+        {
+            turnController.ClearAllButtons();
+        }
+
+        Vector2Int nextPos = movePath.Dequeue();
+        Tile tile = gridManager.GetTileAt(nextPos);
+
+        if (tile == null || !tile.Walkable)
+        {
+            movePath.Clear();
+            return;
+        }
+
+        gridPos = nextPos;
+        targetPos = GetTilePosition(tile);
+        isMoving = true;
+
+        Debug.Log($"1マス移動: {gridPos}");
+    }
+
+
     private void ClearMovableTiles()
     {
+        reachableTiles.Clear();
+
         Tile[,] allTiles = gridManager.GetAllTiles();
         int width = allTiles.GetLength(0);
         int height = allTiles.GetLength(1);
@@ -167,13 +251,14 @@ public class PlayerMove : MonoBehaviour
                 allTiles[x, y].SetMovableColor(false);
             }
         }
+
         Debug.Log("移動範囲非表示");
     }
+
 
     private void TryMoveToMouseClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
         Tile clickedTile = hit.collider.GetComponent<Tile>();
@@ -181,19 +266,20 @@ public class PlayerMove : MonoBehaviour
 
         Vector2Int targetGridPos = clickedTile.gridPosition;
 
-        if (IsAdjacentTile(targetGridPos))
-        {
-            MoveToTile(clickedTile, targetGridPos);
-        }
+        if (!IsReachableTile(targetGridPos)) return;
+
+        BuildStraightPath(targetGridPos);
+        MoveNextStep();
     }
 
-    private bool IsAdjacentTile(Vector2Int targetGridPos)
+
+    private bool IsReachableTile(Vector2Int targetGridPos)
     {
-        Vector2Int diff = targetGridPos - gridPos;
-
-        return (Mathf.Abs(diff.x) == 1 && diff.y == 0) ||
-               (Mathf.Abs(diff.y) == 1 && diff.x == 0);
+        return reachableTiles.Contains(targetGridPos);
     }
+
+
+
 
     private void MoveToTile(Tile tile, Vector2Int newGridPos)
     {

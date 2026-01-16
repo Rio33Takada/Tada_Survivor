@@ -103,6 +103,7 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CreateMainCommandButtons();
+            playerMove.CancelMove();
         }
     }
 
@@ -136,7 +137,7 @@ public class UIManager : MonoBehaviour
         CreateContainerButtons();
     }
 
-    private void ShowAttackMenu()
+    public void ShowAttackMenu()
     {
         ClearAllButtons();
         LockPlayerMovement();
@@ -205,7 +206,7 @@ public class UIManager : MonoBehaviour
         return button;
     }
 
-    private void ClearAllButtons()
+    public void ClearAllButtons()
     {
         foreach (GameObject button in activeButtons)
         {
@@ -235,7 +236,7 @@ public class UIManager : MonoBehaviour
 
     private void OnAttackButtonClicked()
     {
-        commandController.OnNomalAttackSelected();
+        commandController.OnAttackMenuSelected();
         ShowAttackMenu();
     }
 

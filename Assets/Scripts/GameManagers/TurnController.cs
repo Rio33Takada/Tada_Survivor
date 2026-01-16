@@ -17,6 +17,14 @@ public class TurnController : MonoBehaviour
         StartPlayerTurn();
     }
 
+    public void ClearAllButtons()
+    {
+        if (uiManager != null)
+        {
+            uiManager.ClearAllButtons();
+        }
+    }
+
     public void EndPlayerTurn()
     {
         if (!IsPlayerTurn) return;
@@ -28,6 +36,10 @@ public class TurnController : MonoBehaviour
     {
         IsPlayerTurn = true;
         uiManager.SetButtonsInteractable(true);
+        if (uiManager != null)
+        {
+            uiManager.CreateMainCommandButtons(); 
+        }
         Debug.Log("▶ プレイヤーターン開始");
     }
 
