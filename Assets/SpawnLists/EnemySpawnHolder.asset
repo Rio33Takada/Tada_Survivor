@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7da188130839e840a5fe3c4df8a364d, type: 3}
   m_Name: EnemySpawnHolder
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
   spawnList:
-  - position: {x: 5, y: 2}
-    enemyType: 0
-  - position: {x: 3, y: 7}
+  - position: {x: 8, y: 9}
     enemyType: 1
-  - position: {x: 6, y: 4}
+  - position: {x: 9, y: 9}
+    enemyType: 1
+  - position: {x: 5, y: 6}
     enemyType: 2
-=======
-  spawnList: []
->>>>>>> feature/enemy
+  - position: {x: 7, y: 4}
+    enemyType: 2
+  - position: {x: 6, y: 3}
+    enemyType: 2

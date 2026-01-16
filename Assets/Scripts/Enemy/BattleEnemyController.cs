@@ -2,27 +2,25 @@ using takada;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 public class BattleEnemyController
 {
     private BattleEnemyFactory enemyFactory;
     private GridManager gridManager;
     private PlayerMove player;
     private PlayerStatus playerStatus;
+    private UIManager uiManager;
 
     public List<BattleEnemy> EnemyList { get; private set; }
 
-    public BattleEnemyController
-        (
-        GridManager grid, 
-        EnemyPrefabHolder holder, 
-        PlayerMove player, 
-        PlayerStatus status
-        )
+    // コンストラクタで UIManager を受け取る
+    public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder, PlayerMove player, PlayerStatus status, UIManager ui)
     {
         enemyFactory = new BattleEnemyFactory(holder, this, grid);
         gridManager = grid;
         this.player = player;
         playerStatus = status;
+        uiManager = ui; // ここが重要
 
         EnemyList = new List<BattleEnemy>();
     }
@@ -53,7 +51,6 @@ public class BattleEnemyController
         }
     }
 
-
     public void AttackEnemy()
     {
         foreach (BattleEnemy enemy in EnemyList)
@@ -64,15 +61,33 @@ public class BattleEnemyController
 
     public void DamageEnemy(List<GameObject> enemies)
     {
-        foreach(GameObject enemy in enemies)
+        foreach (GameObject enemy in enemies)
         {
             var be = enemy.GetComponent<BattleEnemy>();
-            be.TakeDamage(1);
+            if (be != null)
+            {
+                be.TakeDamage(1);
+            }
+        }
+
+        // 死亡済みの敵を EnemyList から削除
+        EnemyList.RemoveAll(e => e.IsDead);
+
+        // 敵が0になったらゲームクリア
+        if (EnemyList.Count <= 0 && uiManager != null)
+        {
+            uiManager.OnGameClear();
         }
     }
 
     private void HandleEnemyDeath(BattleEnemy enemy)
     {
         EnemyList.Remove(enemy);
+
+        // 敵が0になったらゲームクリア
+        if (EnemyList.Count <= 0 && uiManager != null)
+        {
+            uiManager.OnGameClear();
+        }
     }
 }
