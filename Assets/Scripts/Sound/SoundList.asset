@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3084c4cb9b46e64bb12b6f3780ca762, type: 3}
   m_Name: SoundList
   m_EditorClassIdentifier: 
-  audios: []
+  title: {fileID: 0}
+  grassLand: {fileID: 0}
+  volcano: {fileID: 0}
+  gameClear: {fileID: 0}
+  gameOver: {fileID: 0}
