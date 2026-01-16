@@ -18,13 +18,13 @@ public class BattleEnemyFactory
         this.gridManager = grid;
     }
 
-    public void CreateBattleEnemy(EnemyType type, Vector2Int pos)
+    public BattleEnemy CreateBattleEnemy(EnemyType type, Vector2Int pos)
     {
         var prefab = prefabHolder.GetPrefab(type);
         if (prefab == null)
         {
             Debug.LogError($"Prefab が見つかりません: {type}");
-            return;
+            return null;
         }
 
         var go = GameObject.Instantiate(prefab);
@@ -33,11 +33,13 @@ public class BattleEnemyFactory
         if (enemy == null)
         {
             Debug.LogError($"{type} のPrefab に BattleEnemy がアタッチされていません");
-            return;
+            return null;
         }
 
         enemy.SetPosition(pos, gridManager);
 
         enemyController.AddEnemy(enemy);
+
+        return enemy;
     }
 }

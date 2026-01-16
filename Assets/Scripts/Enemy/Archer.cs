@@ -28,7 +28,11 @@ public class Archer : BattleEnemy
         foreach (var d in Dirs)
         {
             var pos = GridPosition + d;
-            if (pos == playerPos) Debug.Log("ArcherはPlayerに攻撃した"); // プレイヤーにダメージ.
+            if (pos == playerPos) 
+            {
+                Debug.Log("ArcherはPlayerに攻撃した"); // プレイヤーにダメージ.
+                player.TakeDamage(1);
+            }
         }
     }
 }

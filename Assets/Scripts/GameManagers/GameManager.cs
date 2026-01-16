@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] private PlayerMove player;
+    [SerializeField] private PlayerStatus playerStatus;
 
     [Header("Initial Stats")]
     [SerializeField] private int initialAttackPoint = 3;
@@ -74,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeManagers()
     {
-        battleEnemyController = new BattleEnemyController(gridManager, enemyPrefabHolder, player);
+        battleEnemyController = new BattleEnemyController(gridManager, enemyPrefabHolder, player, playerStatus);
 
         if (uiManager != null)
         {

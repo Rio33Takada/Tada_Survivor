@@ -15,6 +15,7 @@ namespace takada
 {
     public abstract class BattleEnemy : MonoBehaviour
     {
+        protected PlayerStatus player;
         protected virtual int BaseMaxHp => 1;
         public int MaxHp { get; private set; }
         public int Hp { get; private set; }
@@ -37,6 +38,11 @@ namespace takada
         {
             MaxHp = BaseMaxHp;
             Hp = MaxHp;
+        }
+
+        public void SetPlayerStatus(PlayerStatus status)
+        {
+            player = status;
         }
 
         public void SetPosition(Vector2Int pos, GridManager grid)

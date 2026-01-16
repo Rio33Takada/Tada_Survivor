@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerMove playerMove;
+    [SerializeField] private PlayerStatus playerStatus;
     [SerializeField] private TurnController turnController;
     [SerializeField] private Canvas mainCanvas;
     [SerializeField] private Transform buttonContainer;
@@ -30,6 +31,7 @@ public class UIManager : MonoBehaviour
 
     private CommandController commandController;
     private GameObject attackPointIcons;
+    private GameObject hpIcons;
     private readonly List<GameObject> activeButtons = new List<GameObject>();
 
     // ボタン参照の構造体化
@@ -69,7 +71,8 @@ public class UIManager : MonoBehaviour
     {
         commandController = controller;
         InitializeAttackPointIcons();
-        SetSkillPoint(gameManager.AttackPoint);
+        SetSkillPoint(playerStatus.CurrentSP);
+        SetHP(playerStatus.CurrentHP);
         SetWaveCountText(gameManager.WaveCount);
         CreateMainCommandButtons();
     }
@@ -296,6 +299,17 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region UI Updates
+
+    public void SetHP(int amount)
+    {
+        if (hpIcons == null) return;
+        AttackPointIconController controller = hpIcons.GetComponent<AttackPointIconController>();
+        if (controller != null)
+        {
+            controller.AttackPointSet(amount);
+        }
+    }
+
 
     public void SetSkillPoint(int point)
     {

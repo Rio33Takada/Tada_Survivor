@@ -6,12 +6,19 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] private int maxSP = 5;
     [SerializeField] private int currentSP;
 
+    [Header("HP Settings")]
+    [SerializeField] private int maxHP = 3;
+    [SerializeField] private int currentHP;
     public int CurrentSP => currentSP;
     public int MaxSP => maxSP;
+
+    public int CurrentHP => currentHP;
+    public int MaxHP => maxHP;
 
     private void Awake()
     {
         currentSP = maxSP;
+        currentHP = maxHP;
     }
 
     public bool ConsumeSP(int amount)
@@ -31,5 +38,15 @@ public class PlayerStatus : MonoBehaviour
     {
         currentSP = Mathf.Min(maxSP, currentSP + amount);
         Debug.Log($"[PlayerStatus] SP回復: {amount} / 現在SP: {currentSP}");
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHP -= amount;
+        Debug.Log($"現在HP{currentHP}");
+        if (currentHP < 0)
+        {
+            Debug.Log("ゲームオーバー");
+        }
     }
 }
