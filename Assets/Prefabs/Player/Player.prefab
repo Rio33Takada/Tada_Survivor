@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7850102976434838014}
   - component: {fileID: 1432325422527430320}
-  - component: {fileID: 2949014313787378134}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -55,28 +54,6 @@ MonoBehaviour:
   moveRange: 1
   isActionLocked: 0
   gridPos: {x: 0, y: 0}
---- !u!95 &2949014313787378134
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7233631590568429455}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9c296b930aff18c45ac4b58d7bd9c565, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &1032214170918119260
 PrefabInstance:
   m_ObjectHideFlags: 0
