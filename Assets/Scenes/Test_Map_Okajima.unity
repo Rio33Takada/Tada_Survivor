@@ -480,6 +480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStatus: {fileID: 975643132}
+  gridManager: {fileID: 299829450}
+  playerMove: {fileID: 530873857}
 --- !u!114 &975643132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSP: 5
-  currentSP: 0
+  currentSP: 2
 --- !u!114 &975643133
 MonoBehaviour:
   m_ObjectHideFlags: 0

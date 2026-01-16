@@ -13,22 +13,9 @@ MonoBehaviour:
   m_Name: EnemySpawnHolder
   m_EditorClassIdentifier: 
   spawnList:
-<<<<<<< HEAD
-  - position: {x: 6, y: 2}
-    enemyType: 2
-  - position: {x: 1, y: 5}
-    enemyType: 2
-  - position: {x: 4, y: 3}
-    enemyType: 2
-  - position: {x: 3, y: 0}
-    enemyType: 2
-=======
-  - position: {x: 1, y: 1}
-    enemyType: 2
-  - position: {x: 2, y: 2}
-    enemyType: 2
-  - position: {x: 3, y: 3}
+  - position: {x: 5, y: 2}
+    enemyType: 0
+  - position: {x: 3, y: 7}
     enemyType: 1
-  - position: {x: 4, y: 4}
-    enemyType: 1
->>>>>>> feature/enemy
+  - position: {x: 6, y: 4}
+    enemyType: 2
