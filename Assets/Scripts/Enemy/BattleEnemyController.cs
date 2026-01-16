@@ -7,14 +7,22 @@ public class BattleEnemyController
     private BattleEnemyFactory enemyFactory;
     private GridManager gridManager;
     private PlayerMove player;
+    private PlayerStatus playerStatus;
 
     public List<BattleEnemy> EnemyList { get; private set; }
 
-    public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder, PlayerMove player)
+    public BattleEnemyController
+        (
+        GridManager grid, 
+        EnemyPrefabHolder holder, 
+        PlayerMove player, 
+        PlayerStatus status
+        )
     {
         enemyFactory = new BattleEnemyFactory(holder, this, grid);
         gridManager = grid;
         this.player = player;
+        playerStatus = status;
 
         EnemyList = new List<BattleEnemy>();
     }
@@ -33,7 +41,8 @@ public class BattleEnemyController
 
     public void SpawnEnemy(EnemyType type, Vector2Int pos)
     {
-        enemyFactory.CreateBattleEnemy(type, pos);
+        var enemy = enemyFactory.CreateBattleEnemy(type, pos);
+        enemy.SetPlayerStatus(playerStatus);
     }
 
     public async Task MoveEnemyAsync()

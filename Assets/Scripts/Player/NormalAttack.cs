@@ -1,5 +1,6 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System.Collections.Generic;
+using takada;
 
 public class NormalAttack : MonoBehaviour
 {
@@ -14,13 +15,22 @@ public class NormalAttack : MonoBehaviour
     private Dictionary<Vector2Int, Tile> attackTiles = new();
     private HashSet<Vector2Int> enemyTiles = new();
 
+    private Vector2Int currentDir = Vector2Int.up;
+    private static readonly Vector2Int[] ALL_DIRS =
+    {
+        Vector2Int.up,
+        Vector2Int.right,
+        Vector2Int.down,
+        Vector2Int.left
+    };
+
     public void Execute()
     {
-        Debug.Log($"{LOG_PREFIX} ÉmÅ[É}ÉãçUåÇäJén");
-
-        ClearAttackTiles();
-        ShowAttackTiles();
+        Debug.Log($"{LOG_PREFIX} ÊîªÊíÉÈñãÂßã");
         isAttackMode = true;
+        currentDir = Vector2Int.up;
+
+        RefreshAllDirections();
     }
 
     private void Update()
@@ -28,46 +38,55 @@ public class NormalAttack : MonoBehaviour
         if (!isAttackMode) return;
 
         if (Input.GetMouseButtonDown(0))
-            TryAttack();
+            TrySelectDirectionOrAttack();
 
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
             CancelAttack();
     }
 
-    private void ShowAttackTiles()
+    private void RefreshAllDirections()
     {
+        ClearTiles();
+        enemyTiles.Clear();
+
         Vector2Int playerPos = playerMove.GetGridPosition();
 
-        Vector2Int[] dirs =
+        foreach (Vector2Int dir in ALL_DIRS)
         {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
+            bool hasEnemyInDir = false;
 
-        foreach (Vector2Int dir in dirs)
-        {
-            Vector2Int pos = playerPos + dir;
-            Tile tile = gridManager.GetTileAt(pos);
-
-            if (tile == null || !tile.Walkable) continue;
-
-            attackTiles[pos] = tile;
-
-            if (IsEnemyOnTile(pos))
+            // Á∏¶2„Éû„Çπ
+            for (int f = 1; f <= 2; f++)
             {
-                tile.SetTargetColor();   // â©êFÅiçUåÇâ¬î\Åj
-                enemyTiles.Add(pos);
+                Vector2Int pos = playerPos + dir * f;
+                Tile tile = gridManager.GetTileAt(pos);
+                if (tile == null) break;
+
+                attackTiles[pos] = tile;
+
+                if (IsEnemyOnTile(pos))
+                {
+                    hasEnemyInDir = true;
+                    enemyTiles.Add(pos);
+                }
             }
-            else
+
+            // Ëâ≤‰ªò„Åë
+            for (int f = 1; f <= 2; f++)
             {
-                tile.SetEnemyAttackColor();  // ê‘ÅiçUåÇïsâ¬Åj
+                Vector2Int pos = playerPos + dir * f;
+                if (!attackTiles.ContainsKey(pos)) continue;
+
+                Tile tile = attackTiles[pos];
+                if (hasEnemyInDir)
+                    tile.SetEnemyAttackColor(); // Ëµ§: ÊïµÊñπÂêëÂÖ®‰Ωì
+                else
+                    tile.SetTargetColor();      // ÈªÑ: Êïµ„Å™„Åó
             }
         }
     }
 
-    private void TryAttack()
+    private void TrySelectDirectionOrAttack()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
@@ -75,41 +94,47 @@ public class NormalAttack : MonoBehaviour
         Tile tile = hit.collider.GetComponent<Tile>();
         if (tile == null) return;
 
-        Vector2Int clickedPos = tile.gridPosition;
+        Vector2Int clickPos = tile.gridPosition;
+        Vector2Int playerPos = playerMove.GetGridPosition();
 
-        // Enemy Ç™Ç¢ÇÈÉ}ÉXÇÃÇ›çUåÇâ¬î\
-        if (!enemyTiles.Contains(clickedPos))
+        Vector2Int dir = clickPos - playerPos;
+
+        if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+            currentDir = dir.x > 0 ? Vector2Int.right : Vector2Int.left;
+        else
+            currentDir = dir.y > 0 ? Vector2Int.up : Vector2Int.down;
+
+        RefreshAllDirections();
+
+        // Êïµ„Åå„ÅÑ„ÇãÂ†¥Âêà„ÅØÊîªÊíÉ
+        if (enemyTiles.Contains(clickPos))
         {
-            Debug.Log($"{LOG_PREFIX} EnemyÇ»Çµ Å® çUåÇïsâ¬");
-            return;
+            AttackEnemy(clickPos);
+            FinishAttack();
         }
-
-        Debug.Log($"{LOG_PREFIX} çUåÇämíË {clickedPos}");
-
-        // Åö Ç±Ç±Ç≈É_ÉÅÅ[ÉWèàóù
-        AttackEnemy(clickedPos);
-
-        FinishAttack();
     }
 
-    private void AttackEnemy(Vector2Int gridPos)
+    private void AttackEnemy(Vector2Int pos)
     {
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            if (gridManager.WorldToGrid(enemy.transform.position) == gridPos)
+            if (gridManager.WorldToGrid(enemy.transform.position) == pos)
             {
-                Debug.Log($"{LOG_PREFIX} Enemy Hit!");
-                Destroy(enemy); // âº
-                break;
+                BattleEnemy be = enemy.GetComponent<BattleEnemy>();
+                if (be != null)
+                    be.TakeDamage(1);
+
+                Debug.Log($"{LOG_PREFIX} Enemy Hit at {pos}");
+                return;
             }
         }
     }
 
-    private bool IsEnemyOnTile(Vector2Int gridPos)
+    private bool IsEnemyOnTile(Vector2Int pos)
     {
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            if (gridManager.WorldToGrid(enemy.transform.position) == gridPos)
+            if (gridManager.WorldToGrid(enemy.transform.position) == pos)
                 return true;
         }
         return false;
@@ -117,19 +142,18 @@ public class NormalAttack : MonoBehaviour
 
     public void CancelAttack()
     {
-        Debug.Log($"{LOG_PREFIX} çUåÇÉLÉÉÉìÉZÉã");
         FinishAttack();
     }
 
     private void FinishAttack()
     {
-        ClearAttackTiles();
+        ClearTiles();
         isAttackMode = false;
     }
 
-    public void ClearAttackTiles()
+    private void ClearTiles()
     {
-        foreach (var tile in attackTiles.Values)
+        foreach (Tile tile in attackTiles.Values)
             tile.ResetColor();
 
         attackTiles.Clear();
