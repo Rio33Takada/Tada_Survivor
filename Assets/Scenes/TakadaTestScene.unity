@@ -747,10 +747,12 @@ MonoBehaviour:
   uiManager: {fileID: 197780717}
   gridManager: {fileID: 1677311833}
   turnController: {fileID: 1677311834}
+  commandController: {fileID: 0}
   player: {fileID: 2137073725}
   initialAttackPoint: 3
   initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 0777c5a0748f1704e8de9a60427bade7, type: 2}
+  enemySpawn: {fileID: 0}
 --- !u!4 &1677311832
 Transform:
   m_ObjectHideFlags: 0
