@@ -16,7 +16,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Text waveCountText;
 
     [Header("Prefabs")]
-    [SerializeField] private GameObject attackPointIconsPrefab;
     [SerializeField] private List<GameObject> buttonPrefabs;
 
     [Header("Button Positions")]
@@ -26,12 +25,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Vector2 normalAttackButtonPos;
     [SerializeField] private Vector2 specialAttackButtonPos;
 
-    [Header("Icon Positions")]
-    [SerializeField] private Vector2 attackPointIconsPos;
-
     private CommandController commandController;
-    private GameObject attackPointIcons;
-    private GameObject hpIcons;
+    [SerializeField] private AttackPointIconController attackPointIcons;
+    [SerializeField] private AttackPointIconController hpIcons;
     private readonly List<GameObject> activeButtons = new List<GameObject>();
 
     // ボタン参照の構造体化
@@ -70,23 +66,10 @@ public class UIManager : MonoBehaviour
     public void InitializeUI(GameManager gameManager, CommandController controller)
     {
         commandController = controller;
-        InitializeAttackPointIcons();
         SetSkillPoint(playerStatus.CurrentSP);
         SetHP(playerStatus.CurrentHP);
         SetWaveCountText(gameManager.WaveCount);
         CreateMainCommandButtons();
-    }
-
-    private void InitializeAttackPointIcons()
-    {
-        if (attackPointIcons != null)
-        {
-            Destroy(attackPointIcons);
-        }
-
-        attackPointIcons = Instantiate(attackPointIconsPrefab, mainCanvas.transform);
-        RectTransform rectTransform = attackPointIcons.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = attackPointIconsPos;
     }
 
     #endregion
@@ -302,23 +285,18 @@ public class UIManager : MonoBehaviour
 
     public void SetHP(int amount)
     {
-        if (hpIcons == null) return;
-        AttackPointIconController controller = hpIcons.GetComponent<AttackPointIconController>();
-        if (controller != null)
+        if (hpIcons != null)
         {
-            controller.AttackPointSet(amount);
+            hpIcons.AttackPointSet(amount);
         }
     }
 
 
     public void SetSkillPoint(int point)
     {
-        if (attackPointIcons == null) return;
-
-        AttackPointIconController controller = attackPointIcons.GetComponent<AttackPointIconController>();
-        if (controller != null)
+        if (attackPointIcons != null)
         {
-            controller.AttackPointSet(point);
+            attackPointIcons.AttackPointSet(point);
         }
     }
 

@@ -9,6 +9,9 @@ public class PlayerStatus : MonoBehaviour
     [Header("HP Settings")]
     [SerializeField] private int maxHP = 3;
     [SerializeField] private int currentHP;
+
+    [SerializeField] private UIManager uiManager;
+
     public int CurrentSP => currentSP;
     public int MaxSP => maxSP;
 
@@ -44,6 +47,7 @@ public class PlayerStatus : MonoBehaviour
     {
         currentHP -= amount;
         Debug.Log($"現在HP{currentHP}");
+        uiManager.SetHP(currentHP);
         if (currentHP < 0)
         {
             Debug.Log("ゲームオーバー");
