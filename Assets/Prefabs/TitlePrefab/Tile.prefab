@@ -123,5 +123,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridPosition: {x: 0, y: 0}
-  walkable: 0
   occupant: {fileID: 0}
+  defaultColor: {r: 0.61725056, g: 0.61725056, b: 0.61725056, a: 1}
+  moveColor: {r: 0, g: 1, b: 1, a: 1}
+  attackRangeColor: {r: 1, g: 0, b: 0, a: 0.4}
+  enemyAttackColor: {r: 1, g: 0, b: 0, a: 0.8}
+  targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
