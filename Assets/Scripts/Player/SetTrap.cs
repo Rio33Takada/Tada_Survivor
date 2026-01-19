@@ -18,7 +18,13 @@ public class SetTrap : MonoBehaviour
     private List<Vector2Int> selectablePositions = new();
     private HashSet<Vector2Int> occupiedPositions = new();
     private Dictionary<Vector2Int, Color> originalColors = new();
+    public bool IsTrapMode => isTrapMode;
 
+    public void ForceCancel()
+    {
+        if (!isTrapMode) return;
+        Cancel();
+    }
     public void StartTrapMode()
     {
         if (trapPrefab == null || gridManager == null) return;

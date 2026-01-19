@@ -76,4 +76,9 @@ public class TurnController : MonoBehaviour
         Debug.Log("敵ターン終了 → プレイヤーターンへ");
         StartPlayerTurn();
     }
+    private void GameOver()
+    {
+        Debug.Log("GameOver");
+
+    }
 }

@@ -16,30 +16,46 @@ public class CommandController : MonoBehaviour
     private void Update()
     {
         // トラップモード中の入力処理は SetTrap に委譲
-        if (setTrap != null)
+        if (setTrap != null && setTrap.IsTrapMode)
         {
             setTrap.Tick();
         }
     }
 
+    private bool GuardTrapMode()
+    {
+        if (setTrap != null && setTrap.IsTrapMode)
+        {
+            Debug.Log($"{LOG_PREFIX} TrapMode Cancelled by Other Command");
+            setTrap.ForceCancel();
+            return true; // 他コマンドは実行しない
+        }
+        return false;
+    }
+
     public void OnEndSelected()
     {
         if (!ValidatePlayerTurn()) return;
+        if (GuardTrapMode()) return;
 
         Debug.Log($"{LOG_PREFIX} End Selected");
         playerMove.CancelMove();
         turnController.EndPlayerTurn();
     }
+
     public void OnAttackMenuSelected()
     {
         if (!ValidatePlayerTurn()) return;
+        if (GuardTrapMode()) return;
 
         Debug.Log($"{LOG_PREFIX} Attack Menu Selected");
         playerMove.CancelMove();
     }
+
     public void OnNomalAttackSelected()
     {
         if (!ValidatePlayerTurn()) return;
+        if (GuardTrapMode()) return;
 
         Debug.Log($"{LOG_PREFIX} Normal Attack Selected");
         playerMove.CancelMove();
@@ -49,6 +65,7 @@ public class CommandController : MonoBehaviour
     public void OnSpecialAttackSelected()
     {
         if (!ValidatePlayerTurn()) return;
+        if (GuardTrapMode()) return;
 
         Debug.Log($"{LOG_PREFIX} Special Attack Selected");
         playerMove.CancelMove();

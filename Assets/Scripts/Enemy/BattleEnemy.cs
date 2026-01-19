@@ -31,6 +31,7 @@ namespace takada
             new Vector2Int(0,1),
             new Vector2Int(0,-1)
         };
+        public bool IsDead { get; internal set; }
 
         public event System.Action<BattleEnemy> OnDeath;
 

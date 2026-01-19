@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeManagers()
     {
-        battleEnemyController = new BattleEnemyController(gridManager, enemyPrefabHolder, player, playerStatus);
+        battleEnemyController = new BattleEnemyController(gridManager, enemyPrefabHolder, player, playerStatus,uiManager);
 
         if (uiManager != null)
         {

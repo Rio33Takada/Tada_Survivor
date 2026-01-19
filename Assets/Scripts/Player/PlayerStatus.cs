@@ -48,9 +48,9 @@ public class PlayerStatus : MonoBehaviour
         currentHP -= amount;
         Debug.Log($"現在HP{currentHP}");
         uiManager.SetHP(currentHP);
-        if (currentHP < 0)
+        if (currentHP <= 0)
         {
-            Debug.Log("ゲームオーバー");
+            uiManager.OnGameOver();
         }
     }
 }

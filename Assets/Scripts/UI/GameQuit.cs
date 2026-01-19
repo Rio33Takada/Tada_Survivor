@@ -4,7 +4,7 @@ public class GameQuit : MonoBehaviour
 {
    public void Onbutton()
     {
-        Debug.Log("o");
+        Debug.Log("ƒQ[ƒ€I—¹");
         Application.Quit();
     }
 }

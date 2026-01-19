@@ -17,7 +17,8 @@ public class UIManager : MonoBehaviour
 
     [Header("Prefabs")]
     [SerializeField] private List<GameObject> buttonPrefabs;
-
+    [SerializeField] public GameObject GameoverUI;
+    [SerializeField] public GameObject GameClearUI;
     [Header("Button Positions")]
     [SerializeField] private Vector2 attackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
@@ -320,6 +321,13 @@ public class UIManager : MonoBehaviour
     {
         SetWaveCountText(wave);
     }
-
+    public void OnGameOver()
+    {
+        Instantiate(GameoverUI);
+    }
+    public void OnGameClear()
+    {
+        Instantiate(GameClearUI);
+    }
     #endregion
 }
