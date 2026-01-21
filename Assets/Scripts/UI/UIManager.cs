@@ -31,6 +31,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private AttackPointIconController hpIcons;
     private readonly List<GameObject> activeButtons = new List<GameObject>();
 
+    [SerializeField] private SoundManager soundManager;
+
     // ボタン参照の構造体化
     private struct ButtonReferences
     {
@@ -323,10 +325,12 @@ public class UIManager : MonoBehaviour
     }
     public void OnGameOver()
     {
+        soundManager.PlayBGM(SoundManager.BGMType.GameOver);
         Instantiate(GameoverUI);
     }
     public void OnGameClear()
     {
+        soundManager.PlayBGM(SoundManager.BGMType.GameClear);
         Instantiate(GameClearUI);
     }
     #endregion
