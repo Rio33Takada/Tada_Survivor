@@ -23,7 +23,7 @@ public class Archer : BattleEnemy
         new Vector2Int(1, 2),
     };
 
-    public override void Attack(Vector2Int playerPos)
+    public override async Task Attack(Vector2Int playerPos)
     {
         foreach (var d in Dirs)
         {
@@ -31,7 +31,10 @@ public class Archer : BattleEnemy
             if (pos == playerPos) 
             {
                 Debug.Log("ArcherはPlayerに攻撃した"); // プレイヤーにダメージ.
+                PlayAttackAnimation();
+                await WaitAttackAnimation();
                 player.TakeDamage(1);
+                return;
             }
         }
     }
