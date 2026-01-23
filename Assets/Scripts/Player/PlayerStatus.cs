@@ -36,6 +36,11 @@ public class PlayerStatus : MonoBehaviour
         Debug.Log($"[PlayerStatus] SPÁ”ï: {amount} / c‚èSP: {currentSP}");
         return true;
     }
+    public void RestoreSP(int amount)
+    {
+        currentSP = Mathf.Min(currentSP + amount, maxSP);
+        Debug.Log($"[PlayerStatus] SP‰ñ•œ: +{amount} (Œ»İ: {currentSP}/{maxSP})");
+    }
 
     public void RecoverSP(int amount)
     {
