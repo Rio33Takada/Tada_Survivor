@@ -51,13 +51,14 @@ public class BattleEnemyController
         }
     }
 
-    public void AttackEnemy()
+    public async Task AttackEnemy()
     {
         foreach (BattleEnemy enemy in EnemyList)
         {
-            enemy.Attack(player.gridPos);
+            await enemy.Attack(player.gridPos);
         }
     }
+
 
     public void DamageEnemy(List<GameObject> enemies)
     {

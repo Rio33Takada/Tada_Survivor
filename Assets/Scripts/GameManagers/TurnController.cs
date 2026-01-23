@@ -50,7 +50,7 @@ public class TurnController : MonoBehaviour
         Debug.Log("▶ 敵ターン開始");
 
         await battleEnemyController.MoveEnemyAsync();
-        battleEnemyController.AttackEnemy();
+        await battleEnemyController.AttackEnemy();
 
         EndEnemyTurn();
     }

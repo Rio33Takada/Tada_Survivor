@@ -227,15 +227,15 @@ namespace takada
                 Death();
         }
 
-        public virtual void Death()
-        {
-            if (IsDead) return;
+        //public virtual void Death()
+        //{
+        //    if (IsDead) return;
 
-            IsDead = true;
-            Debug.Log($"{name} ‚ÍŽ€‚ñ‚¾");
-            OnDeath?.Invoke(this);
-            Destroy(gameObject);
-        }
+        //    IsDead = true;
+        //    Debug.Log($"{name} ‚ÍŽ€‚ñ‚¾");
+        //    OnDeath?.Invoke(this);
+        //    Destroy(gameObject);
+        //}
 
         public virtual async Task Attack(Vector2Int playerPos)
         {
@@ -249,9 +249,29 @@ namespace takada
             animator.SetTrigger("Attack");
         }
 
+        protected void PlayDeathAnimation()
+        {
+            if (animator == null) return;
+            animator.SetTrigger("Death");
+        }
+
         protected async Task WaitAttackAnimation(float time = 0.4f)
         {
             await Task.Delay((int)(time * 1000));
+        }
+
+        protected virtual async Task Death()
+        {
+            if (IsDead) return;
+
+            IsDead = true;
+
+            PlayDeathAnimation();
+            await WaitAttackAnimation();
+
+            Debug.Log($"{name} ‚ÍŽ€‚ñ‚¾");
+            OnDeath?.Invoke(this);
+            Destroy(gameObject);
         }
     }
 }

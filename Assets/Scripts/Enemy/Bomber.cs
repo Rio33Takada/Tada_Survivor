@@ -22,10 +22,10 @@ public class Bomber : BattleEnemy
         }
     }
 
-    public override void Death()
+    protected override async Task Death()
     {
         SetBomb();
-        base.Death();
+        await base.Death();
     }
 
     private void SetBomb()
