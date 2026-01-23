@@ -5,17 +5,20 @@ using takada;
 public class NormalAttack : MonoBehaviour
 {
     private const string LOG_PREFIX = "[NormalAttack]";
+    private const int DAMAGE = 1;
+    private const int ATTACK_RANGE = 2; // 攻撃範囲（前方2マス）
 
     [Header("References")]
     [SerializeField] private GridManager gridManager;
     [SerializeField] private PlayerMove playerMove;
+    [SerializeField] private TurnController turnController;
 
     private bool isAttackMode = false;
-
-    private Dictionary<Vector2Int, Tile> attackTiles = new();
-    private HashSet<Vector2Int> enemyTiles = new();
-
     private Vector2Int currentDir = Vector2Int.up;
+
+    private Dictionary<Vector2Int, Tile> allAttackTiles = new();
+    private Dictionary<Vector2Int, GameObject> currentEnemies = new();
+
     private static readonly Vector2Int[] ALL_DIRS =
     {
         Vector2Int.up,
@@ -24,8 +27,18 @@ public class NormalAttack : MonoBehaviour
         Vector2Int.left
     };
 
+    /// <summary>
+    /// 通常攻撃を開始
+    /// </summary>
     public void Execute()
     {
+        // 既に攻撃モード中なら無視
+        if (isAttackMode)
+        {
+            Debug.Log($"{LOG_PREFIX} 既に攻撃モード中");
+            return;
+        }
+
         Debug.Log($"{LOG_PREFIX} 攻撃開始");
         isAttackMode = true;
         currentDir = Vector2Int.up;
@@ -38,55 +51,16 @@ public class NormalAttack : MonoBehaviour
         if (!isAttackMode) return;
 
         if (Input.GetMouseButtonDown(0))
-            TrySelectDirectionOrAttack();
+            HandleClick();
 
         if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape))
             CancelAttack();
     }
 
-    private void RefreshAllDirections()
-    {
-        ClearTiles();
-        enemyTiles.Clear();
-
-        Vector2Int playerPos = playerMove.GetGridPosition();
-
-        foreach (Vector2Int dir in ALL_DIRS)
-        {
-            bool hasEnemyInDir = false;
-
-            // 縦2マス
-            for (int f = 1; f <= 2; f++)
-            {
-                Vector2Int pos = playerPos + dir * f;
-                Tile tile = gridManager.GetTileAt(pos);
-                if (tile == null) break;
-
-                attackTiles[pos] = tile;
-
-                if (IsEnemyOnTile(pos))
-                {
-                    hasEnemyInDir = true;
-                    enemyTiles.Add(pos);
-                }
-            }
-
-            // 色付け
-            for (int f = 1; f <= 2; f++)
-            {
-                Vector2Int pos = playerPos + dir * f;
-                if (!attackTiles.ContainsKey(pos)) continue;
-
-                Tile tile = attackTiles[pos];
-                if (hasEnemyInDir)
-                    tile.SetEnemyAttackColor(); // 赤: 敵方向全体
-                else
-                    tile.SetTargetColor();      // 黄: 敵なし
-            }
-        }
-    }
-
-    private void TrySelectDirectionOrAttack()
+    /// <summary>
+    /// マウスクリック処理
+    /// </summary>
+    private void HandleClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
@@ -95,68 +69,188 @@ public class NormalAttack : MonoBehaviour
         if (tile == null) return;
 
         Vector2Int clickPos = tile.gridPosition;
-        Vector2Int playerPos = playerMove.GetGridPosition();
 
-        Vector2Int dir = clickPos - playerPos;
-
-        if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
-            currentDir = dir.x > 0 ? Vector2Int.right : Vector2Int.left;
-        else
-            currentDir = dir.y > 0 ? Vector2Int.up : Vector2Int.down;
-
-        RefreshAllDirections();
-
-        // 敵がいる場合は攻撃
-        if (enemyTiles.Contains(clickPos))
+        // クリックした位置に敵がいれば攻撃
+        if (currentEnemies.ContainsKey(clickPos))
         {
             AttackEnemy(clickPos);
             FinishAttack();
+            return;
+        }
+
+        // 敵がいなければ方向選択
+        Vector2Int newDir = GetDirectionFromClick(clickPos);
+        if (newDir != Vector2Int.zero)
+        {
+            currentDir = newDir;
+            RefreshAllDirections();
         }
     }
 
-    private void AttackEnemy(Vector2Int pos)
+    /// <summary>
+    /// クリック位置から方向を判定
+    /// </summary>
+    private Vector2Int GetDirectionFromClick(Vector2Int clickPos)
     {
-        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
-        {
-            if (gridManager.WorldToGrid(enemy.transform.position) == pos)
-            {
-                BattleEnemy be = enemy.GetComponent<BattleEnemy>();
-                if (be != null)
-                    be.TakeDamage(1);
+        Vector2Int playerPos = playerMove.GetGridPosition();
+        Vector2Int diff = clickPos - playerPos;
 
-                Debug.Log($"{LOG_PREFIX} Enemy Hit at {pos}");
-                return;
+        // 横方向と縦方向で大きい方を採用
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+            return diff.x > 0 ? Vector2Int.right : Vector2Int.left;
+        else if (Mathf.Abs(diff.y) > 0)
+            return diff.y > 0 ? Vector2Int.up : Vector2Int.down;
+
+        return Vector2Int.zero;
+    }
+
+    /// <summary>
+    /// 全方向の攻撃範囲を表示
+    /// </summary>
+    private void RefreshAllDirections()
+    {
+        ClearTiles();
+        currentEnemies.Clear();
+
+        Vector2Int playerPos = playerMove.GetGridPosition();
+
+        // すべての方向を描画（選択方向は最後）
+        foreach (Vector2Int dir in ALL_DIRS)
+        {
+            DrawDirection(playerPos, dir, dir == currentDir);
+        }
+    }
+
+    /// <summary>
+    /// 指定方向の攻撃範囲を描画
+    /// </summary>
+    private void DrawDirection(Vector2Int playerPos, Vector2Int dir, bool isCurrentDir)
+    {
+        bool hasEnemy = false;
+        List<Vector2Int> directionTiles = new List<Vector2Int>();
+
+        // まず範囲内のタイルと敵をチェック
+        for (int f = 1; f <= ATTACK_RANGE; f++)
+        {
+            Vector2Int pos = playerPos + dir * f;
+            Tile tile = gridManager.GetTileAt(pos);
+            if (tile == null) break;
+
+            directionTiles.Add(pos);
+
+            GameObject enemy = GetEnemyAtPosition(pos);
+            if (enemy != null)
+            {
+                hasEnemy = true;
+                if (isCurrentDir)
+                {
+                    currentEnemies[pos] = enemy;
+                }
+            }
+        }
+
+        // タイルに色を設定
+        foreach (Vector2Int pos in directionTiles)
+        {
+            Tile tile = gridManager.GetTileAt(pos);
+            if (tile == null) continue;
+
+            allAttackTiles[pos] = tile;
+
+            if (isCurrentDir)
+            {
+                // 選択方向: 常に赤
+                tile.SetEnemyAttackColor();
+            }
+            else
+            {
+                // 非選択方向: 常に黄色
+                tile.SetTargetColor();
             }
         }
     }
 
-    private bool IsEnemyOnTile(Vector2Int pos)
+    /// <summary>
+    /// 指定座標の敵を取得
+    /// </summary>
+    private GameObject GetEnemyAtPosition(Vector2Int pos)
     {
-        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies)
         {
-            if (gridManager.WorldToGrid(enemy.transform.position) == pos)
-                return true;
+            if (enemy == null) continue;
+
+            Vector2Int enemyPos = gridManager.WorldToGrid(enemy.transform.position);
+            if (enemyPos == pos)
+                return enemy;
         }
-        return false;
+        return null;
     }
 
+    /// <summary>
+    /// 敵を攻撃
+    /// </summary>
+    private void AttackEnemy(Vector2Int pos)
+    {
+        if (!currentEnemies.ContainsKey(pos)) return;
+
+        GameObject enemy = currentEnemies[pos];
+        if (enemy == null)
+        {
+            Debug.LogWarning($"{LOG_PREFIX} 敵が既に存在しません");
+            return;
+        }
+
+        BattleEnemy be = enemy.GetComponent<BattleEnemy>();
+        if (be != null)
+        {
+            be.TakeDamage(DAMAGE);
+            Debug.Log($"{LOG_PREFIX} 敵に{DAMAGE}ダメージ at {pos}");
+            turnController.EndPlayerTurn();
+        }
+    }
+
+    /// <summary>
+    /// 攻撃キャンセル
+    /// </summary>
     public void CancelAttack()
     {
+        Debug.Log($"{LOG_PREFIX} 攻撃キャンセル");
         FinishAttack();
     }
 
+    /// <summary>
+    /// 攻撃モード終了
+    /// </summary>
     private void FinishAttack()
     {
+        if (!isAttackMode) return; // 既に終了していれば何もしない
+
         ClearTiles();
+        currentEnemies.Clear();
         isAttackMode = false;
+
+        Debug.Log($"{LOG_PREFIX} 攻撃モード終了");
     }
 
+    /// <summary>
+    /// タイルの色をリセット
+    /// </summary>
     private void ClearTiles()
     {
-        foreach (Tile tile in attackTiles.Values)
-            tile.ResetColor();
+        foreach (Tile tile in allAttackTiles.Values)
+        {
+            if (tile != null)
+                tile.ResetColor();
+        }
 
-        attackTiles.Clear();
-        enemyTiles.Clear();
+        allAttackTiles.Clear();
     }
+
+    /// <summary>
+    /// デバッグ用：現在の状態を取得
+    /// </summary>
+    public bool IsAttackMode() => isAttackMode;
+    public Vector2Int GetCurrentDirection() => currentDir;
+    public int GetTargetCount() => currentEnemies.Count;
 }

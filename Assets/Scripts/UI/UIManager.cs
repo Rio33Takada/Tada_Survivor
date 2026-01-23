@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private List<GameObject> buttonPrefabs;
     [SerializeField] public GameObject GameoverUI;
     [SerializeField] public GameObject GameClearUI;
+
     [Header("Button Positions")]
     [SerializeField] private Vector2 attackButtonPos;
     [SerializeField] private Vector2 trapButtonPos;
@@ -26,14 +27,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Vector2 normalAttackButtonPos;
     [SerializeField] private Vector2 specialAttackButtonPos;
 
-    private CommandController commandController;
+    [Header("Icons")]
     [SerializeField] private AttackPointIconController attackPointIcons;
     [SerializeField] private AttackPointIconController hpIcons;
-    private readonly List<GameObject> activeButtons = new List<GameObject>();
 
+    [Header("Sound")]
     [SerializeField] private SoundManager soundManager;
 
-    // ボタン参照の構造体化
+    private CommandController commandController;
+    private readonly List<GameObject> activeButtons = new List<GameObject>();
+
+    // ボタン参照
     private struct ButtonReferences
     {
         public Button End;
@@ -44,7 +48,7 @@ public class UIManager : MonoBehaviour
     }
     private ButtonReferences buttons;
 
-    // 定数定義
+    // 定数
     private const int BUTTON_INDEX_END = 0;
     private const int BUTTON_INDEX_ATTACK = 1;
     private const int BUTTON_INDEX_TRAP = 2;
@@ -81,18 +85,26 @@ public class UIManager : MonoBehaviour
 
     private void UpdateButtonStates()
     {
-        if (turnController != null)
-        {
-            SetButtonsInteractable(turnController.IsPlayerTurn);
-        }
+        if (turnController == null || commandController == null) return;
+
+        bool isPlayerTurn = turnController.IsPlayerTurn;
+        bool isAnyModeActive = commandController.IsAnyModeActive();
+
+        // プレイヤーターンかつ、いずれのモードもアクティブでない場合のみボタンを有効化
+        bool shouldEnableButtons = isPlayerTurn && !isAnyModeActive;
+
+        SetButtonsInteractable(shouldEnableButtons);
     }
 
     private void HandleEscapeInput()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (commandController != null)
+            {
+                commandController.CancelAllModes();
+            }
             CreateMainCommandButtons();
-            playerMove.CancelMove();
         }
     }
 
@@ -134,26 +146,35 @@ public class UIManager : MonoBehaviour
         buttons.NormalAttack = CreateCanvasButton(
             buttonPrefabs[BUTTON_INDEX_NORMAL_ATTACK],
             normalAttackButtonPos,
-            () => commandController.OnNomalAttackSelected()
+            OnNormalAttackButtonClicked
         );
 
         buttons.SpecialAttack = CreateCanvasButton(
             buttonPrefabs[BUTTON_INDEX_SPECIAL_ATTACK],
             specialAttackButtonPos,
-            () => commandController.OnSpecialAttackSelected()
+            OnSpecialAttackButtonClicked
         );
     }
 
     private void CreateContainerButtons()
     {
-        CreateContainerButton(buttonPrefabs[BUTTON_INDEX_END], "移動",
-            () => commandController.OnEndSelected());
+        CreateContainerButton(
+            buttonPrefabs[BUTTON_INDEX_END],
+            "移動",
+            OnEndButtonClicked
+        );
 
-        CreateContainerButton(buttonPrefabs[BUTTON_INDEX_ATTACK], "攻撃",
-            () => commandController.OnNomalAttackSelected());
+        CreateContainerButton(
+            buttonPrefabs[BUTTON_INDEX_ATTACK],
+            "攻撃",
+            OnNormalAttackButtonClicked
+        );
 
-        CreateContainerButton(buttonPrefabs[BUTTON_INDEX_TRAP], "トラップ",
-            () => commandController.OnSetTrapSelected());
+        CreateContainerButton(
+            buttonPrefabs[BUTTON_INDEX_TRAP],
+            "トラップ",
+            OnTrapButtonClicked
+        );
     }
 
     private void CreateContainerButton(GameObject prefab, string label, UnityEngine.Events.UnityAction onClick)
@@ -220,18 +241,54 @@ public class UIManager : MonoBehaviour
 
     private void OnEndButtonClicked()
     {
+        if (!CanExecuteCommand()) return;
         commandController.OnEndSelected();
     }
 
     private void OnAttackButtonClicked()
     {
+        if (!CanExecuteCommand()) return;
         commandController.OnAttackMenuSelected();
         ShowAttackMenu();
     }
 
     private void OnTrapButtonClicked()
     {
+        if (!CanExecuteCommand()) return;
         commandController.OnSetTrapSelected();
+    }
+
+    private void OnNormalAttackButtonClicked()
+    {
+        if (!CanExecuteCommand()) return;
+        commandController.OnNomalAttackSelected();
+    }
+
+    private void OnSpecialAttackButtonClicked()
+    {
+        if (!CanExecuteCommand()) return;
+        commandController.OnSpecialAttackSelected();
+    }
+
+    /// <summary>
+    /// コマンド実行可能かチェック
+    /// </summary>
+    private bool CanExecuteCommand()
+    {
+        if (commandController == null)
+        {
+            Debug.LogWarning("[UIManager] CommandController is null");
+            return false;
+        }
+
+        // 既にいずれかのモードがアクティブなら実行不可
+        if (commandController.IsAnyModeActive())
+        {
+            Debug.Log("[UIManager] モード実行中のため新しいコマンドを受け付けません");
+            return false;
+        }
+
+        return true;
     }
 
     #endregion
@@ -294,7 +351,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
     public void SetSkillPoint(int point)
     {
         if (attackPointIcons != null)
@@ -323,15 +379,30 @@ public class UIManager : MonoBehaviour
     {
         SetWaveCountText(wave);
     }
+
     public void OnGameOver()
     {
-        soundManager.PlayBGM(SoundManager.BGMType.GameOver);
-        Instantiate(GameoverUI);
+        if (soundManager != null)
+        {
+            soundManager.PlayBGM(SoundManager.BGMType.GameOver);
+        }
+        if (GameoverUI != null)
+        {
+            Instantiate(GameoverUI);
+        }
     }
+
     public void OnGameClear()
     {
-        soundManager.PlayBGM(SoundManager.BGMType.GameClear);
-        Instantiate(GameClearUI);
+        if (soundManager != null)
+        {
+            soundManager.PlayBGM(SoundManager.BGMType.GameClear);
+        }
+        if (GameClearUI != null)
+        {
+            Instantiate(GameClearUI);
+        }
     }
+
     #endregion
 }
