@@ -10,6 +10,9 @@ public class Tile : MonoBehaviour
     [Header("Occupant")]
     public GameObject occupant;
 
+    [Header("Trap")]
+    [SerializeField] private Trap trap;
+
     [Header("Colors")]
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Color moveColor = Color.cyan;
@@ -49,9 +52,27 @@ public class Tile : MonoBehaviour
     {
         rend.material.color = defaultColor;
     }
+    public void SetTrap(Trap t)
+    {
+        trap = t;
+    }
 
     public void SetOccupantObject(GameObject obj)
     {
         occupant = obj;
+        Debug.Log($"[Tile] occupant = {obj?.name}, trap = {trap}");
+
+        if (trap != null && occupant != null)
+        {
+            var enemy = occupant.GetComponent<takada.BattleEnemy>();
+            if (enemy != null)
+            {
+                Debug.Log("[Tile] Trap ”­“®");
+                trap.OnStepped(enemy);
+                trap = null;
+            }
+        }
     }
+
+
 }

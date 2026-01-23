@@ -16,13 +16,19 @@ namespace takada
     public abstract class BattleEnemy : MonoBehaviour
     {
         protected PlayerStatus player;
+
         protected virtual int BaseMaxHp => 1;
         public int MaxHp { get; private set; }
         public int Hp { get; private set; }
 
         public Vector2Int GridPosition { get; private set; }
+        private bool hasPosition = false; // ★ 追加：初期配置判定
 
         public bool IsAlive => Hp > 0;
+        public bool IsDead { get; private set; }
+
+        // ★ 移動スキップ
+        protected int skipMoveTurn = 0;
 
         protected virtual Vector2Int[] Dirs { get; } =
         {
@@ -31,9 +37,8 @@ namespace takada
             new Vector2Int(0,1),
             new Vector2Int(0,-1)
         };
-        public bool IsDead { get; internal set; }
 
-        public event System.Action<BattleEnemy> OnDeath;
+        public event Action<BattleEnemy> OnDeath;
 
         protected virtual void Awake()
         {
@@ -48,23 +53,42 @@ namespace takada
 
         public void SetPosition(Vector2Int pos, GridManager grid)
         {
-            grid.GetTileAt(GridPosition).SetOccupantObject(null);
+            // ★ 初回は前のタイルを触らない
+            if (hasPosition)
+            {
+                var prevTile = grid.GetTileAt(GridPosition);
+                if (prevTile != null)
+                    prevTile.SetOccupantObject(null);
+            }
+
             GridPosition = pos;
-            grid.GetTileAt(GridPosition).SetOccupantObject(gameObject);
+            hasPosition = true;
+
+            var tile = grid.GetTileAt(GridPosition);
+            if (tile != null)
+                tile.SetOccupantObject(gameObject);
+
             transform.position = new Vector3(pos.x, 0, pos.y);
+        }
+
+        // ★ トラップから呼ばれる
+        public void SetSkipMove(int turn)
+        {
+            skipMoveTurn = Mathf.Max(skipMoveTurn, turn);
         }
 
         private List<Vector2Int> GetPath(GridManager grid, Vector2Int playerPos)
         {
             Pathfinding pathfinder = new Pathfinding(grid);
-
-            List<Vector2Int> goals = new List<Vector2Int>();
+            List<Vector2Int> goals = new();
 
             foreach (var d in Dirs)
             {
                 Vector2Int pos = playerPos + d;
                 goals.Add(pos);
-                if (GridPosition == pos) return null;
+
+                if (GridPosition == pos)
+                    return null; // すでに隣
             }
 
             List<Vector2Int> bestPath = null;
@@ -72,7 +96,7 @@ namespace takada
 
             foreach (var g in goals)
             {
-                List<Vector2Int> path = pathfinder.FindPath(GridPosition, g);
+                var path = pathfinder.FindPath(GridPosition, g);
                 if (path != null && path.Count < bestCost)
                 {
                     bestCost = path.Count;
@@ -80,43 +104,56 @@ namespace takada
                 }
             }
 
-            if (bestPath == null || bestPath.Count < 2) return null;
+            if (bestPath == null || bestPath.Count < 2)
+                return null;
 
             return bestPath;
         }
 
         public virtual async Task MoveAsync(Vector2Int playerPos, GridManager grid)
         {
-            var bestPath = GetPath(grid, playerPos);
-            if (bestPath == null) 
+            // ★ トラップ停止
+            if (skipMoveTurn > 0)
             {
-                Vector3 lookDir = new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
+                skipMoveTurn--;
+
+                Vector3 lookDir =
+                    new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
+                lookDir.y = 0f;
+
+                await AnimationRotateAsync(lookDir);
+                return;
+            }
+
+            var bestPath = GetPath(grid, playerPos);
+            if (bestPath == null)
+            {
+                Vector3 lookDir =
+                    new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
+                lookDir.y = 0f;
 
                 await AnimationRotateAsync(lookDir);
                 return;
             }
 
             Vector2Int nextPos = bestPath[1];
-
             Vector3 targetWorldPos = grid.GetTileAt(nextPos).transform.position;
 
-            Vector3 moveDir = (targetWorldPos - transform.position);
+            Vector3 moveDir = targetWorldPos - transform.position;
             moveDir.y = 0f;
-            await AnimationRotateAsync(moveDir);
 
+            await AnimationRotateAsync(moveDir);
             await AnimationMoveAsync(targetWorldPos);
 
             SetPosition(nextPos, grid);
 
+            // 移動後の向き調整
             bestPath = GetPath(grid, playerPos);
-            if (bestPath == null)
-                moveDir = new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
-            else
-            {
-                targetWorldPos = grid.GetTileAt(nextPos).transform.position;
-                moveDir = (targetWorldPos - transform.position);
-            }
+            moveDir = bestPath == null
+                ? new Vector3(playerPos.x, 0, playerPos.y) - transform.position
+                : grid.GetTileAt(bestPath[1]).transform.position - transform.position;
 
+            moveDir.y = 0f;
             await AnimationRotateAsync(moveDir);
         }
 
@@ -138,22 +175,17 @@ namespace takada
         {
             float duration = 0.25f;
             float time = 0f;
-
             Vector3 startPos = transform.position;
 
             while (time < duration)
             {
                 time += Time.deltaTime;
-                float t = Mathf.Clamp01(time / duration);
-                t = Mathf.SmoothStep(0, 1, t);
-
+                float t = Mathf.SmoothStep(0, 1, time / duration);
                 transform.position = Vector3.Lerp(startPos, targetPos, t);
-
                 yield return null;
             }
 
             transform.position = targetPos;
-
             tcs.SetResult(true);
         }
 
@@ -174,9 +206,7 @@ namespace takada
             while (time < duration)
             {
                 time += Time.deltaTime;
-                float t = Mathf.Clamp01(time / duration);
-                t = Mathf.SmoothStep(0, 1, t);
-
+                float t = Mathf.SmoothStep(0, 1, time / duration);
                 transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
                 yield return null;
             }
@@ -189,23 +219,19 @@ namespace takada
         {
             Hp -= amount;
             if (!IsAlive)
-            {
                 Death();
-            }
         }
 
         public virtual void Death()
         {
-            Debug.Log($"{this.name}は死んだ");
+            if (IsDead) return;
 
-            OnDeath?.Invoke( this );
-
+            IsDead = true;
+            Debug.Log($"{name} は死んだ");
+            OnDeath?.Invoke(this);
             Destroy(gameObject);
         }
 
-        public virtual void Attack(Vector2Int playerPos)
-        {
-
-        }
+        public virtual void Attack(Vector2Int playerPos) { }
     }
 }

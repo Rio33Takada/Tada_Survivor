@@ -7,6 +7,7 @@ public class BattleEnemyFactory
     private readonly BattleEnemyController enemyController;
     private readonly GridManager gridManager;
 
+
     public BattleEnemyFactory(
         EnemyPrefabHolder prefabHolder,
         BattleEnemyController enemyController,

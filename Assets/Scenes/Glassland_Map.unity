@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 299829451}
+  - component: {fileID: 299829455}
   - component: {fileID: 299829450}
   - component: {fileID: 299829454}
   - component: {fileID: 299829453}
@@ -242,6 +243,26 @@ MonoBehaviour:
   initialMovePoint: 5
   enemyPrefabHolder: {fileID: 11400000, guid: 8b33268305c1ba146914e6bcc1018216, type: 2}
   enemySpawn: {fileID: 11400000, guid: 055291d833eff7f448e192263a2c9068, type: 2}
+--- !u!114 &299829455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299829449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea02b33a8c163c047a97da9af68d2bef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridPosition: {x: 0, y: 0}
+  occupant: {fileID: 0}
+  trap: {fileID: 4222876789837483403, guid: 49d11e560f3970449bcb78462386cc7c, type: 3}
+  defaultColor: {r: 0, g: 0, b: 0, a: 1}
+  moveColor: {r: 0, g: 1, b: 1, a: 1}
+  attackRangeColor: {r: 1, g: 0, b: 0, a: 0.4}
+  enemyAttackColor: {r: 1, g: 0, b: 0, a: 0.8}
+  targetColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1001 &501327597
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -388,11 +409,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 159.1
+      value: 159.1001
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -61.8
+      value: -61.80005
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -654,7 +675,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   turnController: {fileID: 299829452}
-  trapPrefab: {fileID: 919132149155446097, guid: 546dd97e3662a904eb6b5d1928d01155, type: 3}
+  trapPrefab: {fileID: 5077531802077677251, guid: 49d11e560f3970449bcb78462386cc7c, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!114 &1109390390
 MonoBehaviour:

@@ -92,18 +92,31 @@ public class SetTrap : MonoBehaviour
         Vector2Int gridPos = gridManager.WorldToGrid(hit.point);
         if (!selectablePositions.Contains(gridPos)) return;
 
-        Vector3 worldPos = gridManager.GridToWorld(gridPos);
-        Instantiate(trapPrefab, worldPos, Quaternion.identity);
+        Tile tile = gridManager.GetTileAt(gridPos);
+        if (tile == null)
+        {
+            Debug.LogError("Tile ‚ªæ“¾‚Å‚«‚È‚¢");
+            return;
+        }
+
+        // š Tile‚Ì’†S‚ÉATile‚Ìq‚Æ‚µ‚Ä¶¬
+        var trapObj = Instantiate(
+            trapPrefab,
+            tile.transform.position,
+            Quaternion.identity,
+            tile.transform
+        );
+
+        var trap = trapObj.GetComponent<Trap>();
+        tile.SetTrap(trap);
+
+        Debug.Log($"[SetTrap] Trap registered on Tile {gridPos}");
 
         occupiedPositions.Add(gridPos);
-        Debug.Log($"{LOG_PREFIX} Trap Placed {gridPos}");
-
         Cancel();
-        if (turnController != null)
-        {
-            turnController.EndPlayerTurn();
-        }
+        turnController?.EndPlayerTurn();
     }
+
 
     private void Cancel()
     {
