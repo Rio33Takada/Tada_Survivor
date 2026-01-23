@@ -17,6 +17,7 @@ namespace takada
     {
         protected PlayerStatus player;
 
+        protected Animator animator;
         protected virtual int BaseMaxHp => 1;
         public int MaxHp { get; private set; }
         public int Hp { get; private set; }
@@ -44,6 +45,7 @@ namespace takada
         {
             MaxHp = BaseMaxHp;
             Hp = MaxHp;
+            animator = GetComponentInChildren<Animator>();
         }
 
         public void SetPlayerStatus(PlayerStatus status)
@@ -116,6 +118,7 @@ namespace takada
             if (skipMoveTurn > 0)
             {
                 skipMoveTurn--;
+                animator.SetBool("Walk", false);
 
                 Vector3 lookDir =
                     new Vector3(playerPos.x, 0, playerPos.y) - transform.position;
@@ -143,7 +146,9 @@ namespace takada
             moveDir.y = 0f;
 
             await AnimationRotateAsync(moveDir);
+            animator?.SetBool("Walk", true);
             await AnimationMoveAsync(targetWorldPos);
+            animator?.SetBool("Walk", false);
 
             SetPosition(nextPos, grid);
 
@@ -232,6 +237,21 @@ namespace takada
             Destroy(gameObject);
         }
 
-        public virtual void Attack(Vector2Int playerPos) { }
+        public virtual async Task Attack(Vector2Int playerPos)
+        {
+            PlayAttackAnimation();
+            await WaitAttackAnimation();
+        }
+
+        protected void PlayAttackAnimation()
+        {
+            if (animator == null) return;
+            animator.SetTrigger("Attack");
+        }
+
+        protected async Task WaitAttackAnimation(float time = 0.4f)
+        {
+            await Task.Delay((int)(time * 1000));
+        }
     }
 }

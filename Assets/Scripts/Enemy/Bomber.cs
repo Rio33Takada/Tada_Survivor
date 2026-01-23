@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using takada;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ public class Bomber : BattleEnemy
 {
     protected override int BaseMaxHp => 1;
 
-    public override void Attack(Vector2Int playerPos)
+    public override async Task Attack(Vector2Int playerPos)
     {
         foreach (var d in Dirs)
         {
@@ -13,7 +14,10 @@ public class Bomber : BattleEnemy
             if (pos == playerPos) 
             {
                 Debug.Log("BomberはPlayerに攻撃した"); // プレイヤーにダメージ.
+                PlayAttackAnimation();
+                await WaitAttackAnimation();
                 player.TakeDamage(1);
+                return;
             }
         }
     }
