@@ -169,7 +169,7 @@ public class UIManager : MonoBehaviour
         CreateContainerButton(
             buttonPrefabs[BUTTON_INDEX_ATTACK],
             "攻撃",
-            OnNormalAttackButtonClicked
+            OnAttackButtonClicked
         );
 
         CreateContainerButton(

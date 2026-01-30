@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerStatus : MonoBehaviour
 {
     [Header("SP Settings")]
-    [SerializeField] private int maxSP = 5;
+    [SerializeField] private int maxSP = 3;
     [SerializeField] private int currentSP;
 
     [Header("HP Settings")]

@@ -6,7 +6,7 @@ public class NormalAttack : MonoBehaviour
 {
     private const string LOG_PREFIX = "[NormalAttack]";
     private const int DAMAGE = 1;
-    private const int ATTACK_RANGE = 2; // 攻撃範囲（前方2マス）
+    private const int ATTACK_RANGE = 2; // 前方2マス
 
     [Header("References")]
     [SerializeField] private GridManager gridManager;
@@ -28,21 +28,19 @@ public class NormalAttack : MonoBehaviour
         Vector2Int.left
     };
 
-    /// <summary>
-    /// 通常攻撃を開始
-    /// </summary>
+    // =========================
+    // 攻撃開始
+    // =========================
     public void Execute()
     {
-        // 既に攻撃モード中なら無視
-        if (isAttackMode)
-        {
-            Debug.Log($"{LOG_PREFIX} 既に攻撃モード中");
-            return;
-        }
+        if (isAttackMode) return;
 
         Debug.Log($"{LOG_PREFIX} 攻撃開始");
         isAttackMode = true;
-        currentDir = Vector2Int.up;
+
+        // 初期方向：プレイヤーの向き
+        currentDir = GetForwardDirFromPlayer();
+        RotatePlayer(currentDir);
 
         RefreshAllDirections();
     }
@@ -58,9 +56,9 @@ public class NormalAttack : MonoBehaviour
             CancelAttack();
     }
 
-    /// <summary>
-    /// マウスクリック処理
-    /// </summary>
+    // =========================
+    // 入力処理
+    // =========================
     private void HandleClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -71,32 +69,56 @@ public class NormalAttack : MonoBehaviour
 
         Vector2Int clickPos = tile.gridPosition;
 
-        // クリックした位置に敵がいれば攻撃
+        // 敵がいれば攻撃
         if (currentEnemies.ContainsKey(clickPos))
         {
+            RotatePlayer(currentDir);
             AttackEnemy(clickPos);
             FinishAttack();
             return;
         }
 
-        // 敵がいなければ方向選択
+        // 方向変更
         Vector2Int newDir = GetDirectionFromClick(clickPos);
         if (newDir != Vector2Int.zero)
         {
             currentDir = newDir;
+            RotatePlayer(currentDir);
             RefreshAllDirections();
         }
     }
 
-    /// <summary>
-    /// クリック位置から方向を判定
-    /// </summary>
+    // =========================
+    // 向き制御
+    // =========================
+    private void RotatePlayer(Vector2Int dir)
+    {
+        if (dir == Vector2Int.zero) return;
+
+        Vector3 lookDir = new Vector3(dir.x, 0f, dir.y);
+        Quaternion targetRot = Quaternion.LookRotation(lookDir);
+        playerMove.transform.rotation = targetRot;
+    }
+
+    private Vector2Int GetForwardDirFromPlayer()
+    {
+        Vector3 fwd = playerMove.transform.forward;
+        fwd.y = 0f;
+
+        if (Mathf.Abs(fwd.x) > Mathf.Abs(fwd.z))
+            return fwd.x > 0 ? Vector2Int.right : Vector2Int.left;
+        else
+            return fwd.z > 0 ? Vector2Int.up : Vector2Int.down;
+    }
+
+    // =========================
+    // 方向判定
+    // =========================
     private Vector2Int GetDirectionFromClick(Vector2Int clickPos)
     {
         Vector2Int playerPos = playerMove.GetGridPosition();
         Vector2Int diff = clickPos - playerPos;
 
-        // 横方向と縦方向で大きい方を採用
         if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
             return diff.x > 0 ? Vector2Int.right : Vector2Int.left;
         else if (Mathf.Abs(diff.y) > 0)
@@ -105,9 +127,9 @@ public class NormalAttack : MonoBehaviour
         return Vector2Int.zero;
     }
 
-    /// <summary>
-    /// 全方向の攻撃範囲を表示
-    /// </summary>
+    // =========================
+    // 攻撃範囲描画
+    // =========================
     private void RefreshAllDirections()
     {
         ClearTiles();
@@ -115,88 +137,39 @@ public class NormalAttack : MonoBehaviour
 
         Vector2Int playerPos = playerMove.GetGridPosition();
 
-        // すべての方向を描画（選択方向は最後）
         foreach (Vector2Int dir in ALL_DIRS)
         {
             DrawDirection(playerPos, dir, dir == currentDir);
         }
     }
 
-    /// <summary>
-    /// 指定方向の攻撃範囲を描画
-    /// </summary>
     private void DrawDirection(Vector2Int playerPos, Vector2Int dir, bool isCurrentDir)
     {
-        bool hasEnemy = false;
-        List<Vector2Int> directionTiles = new List<Vector2Int>();
-
-        // まず範囲内のタイルと敵をチェック
-        for (int f = 1; f <= ATTACK_RANGE; f++)
+        for (int i = 1; i <= ATTACK_RANGE; i++)
         {
-            Vector2Int pos = playerPos + dir * f;
+            Vector2Int pos = playerPos + dir * i;
             Tile tile = gridManager.GetTileAt(pos);
             if (tile == null) break;
 
-            directionTiles.Add(pos);
-
-            GameObject enemy = GetEnemyAtPosition(pos);
-            if (enemy != null)
-            {
-                hasEnemy = true;
-                if (isCurrentDir)
-                {
-                    currentEnemies[pos] = enemy;
-                }
-            }
-        }
-
-        // タイルに色を設定
-        foreach (Vector2Int pos in directionTiles)
-        {
-            Tile tile = gridManager.GetTileAt(pos);
-            if (tile == null) continue;
-
             allAttackTiles[pos] = tile;
 
+            GameObject enemy = GetEnemyAtPosition(pos);
+            if (enemy != null && isCurrentDir)
+                currentEnemies[pos] = enemy;
+
             if (isCurrentDir)
-            {
-                // 選択方向: 常に赤
-                tile.SetEnemyAttackColor();
-            }
+                tile.SetEnemyAttackColor(); // 赤
             else
-            {
-                // 非選択方向: 常に黄色
-                tile.SetTargetColor();
-            }
+                tile.SetTargetColor();      // 黄
         }
     }
 
-    /// <summary>
-    /// 指定座標の敵を取得
-    /// </summary>
-    private GameObject GetEnemyAtPosition(Vector2Int pos)
-    {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (GameObject enemy in enemies)
-        {
-            if (enemy == null) continue;
-
-            Vector2Int enemyPos = gridManager.WorldToGrid(enemy.transform.position);
-            if (enemyPos == pos)
-                return enemy;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// 敵を攻撃
-    /// </summary>
+    // =========================
+    // 攻撃処理
+    // =========================
     private void AttackEnemy(Vector2Int pos)
     {
-        if (!currentEnemies.ContainsKey(pos)) return;
-
-        GameObject enemy = currentEnemies[pos];
-        if (enemy == null) return;
+        if (!currentEnemies.TryGetValue(pos, out GameObject enemy)) return;
 
         BattleEnemy be = enemy.GetComponent<BattleEnemy>();
         if (be == null) return;
@@ -204,32 +177,40 @@ public class NormalAttack : MonoBehaviour
         be.TakeDamage(DAMAGE);
         Debug.Log($"{LOG_PREFIX} 敵に{DAMAGE}ダメージ");
 
-        // ★ 攻撃成功でSP＋1
-        if (playerStatus != null)
-        {
-            playerStatus.RestoreSP(1);
-        }
+        // 攻撃成功でSP回復
+        playerStatus?.RestoreSP(1);
 
         turnController.EndPlayerTurn();
     }
 
+    // =========================
+    // 敵検索
+    // =========================
+    private GameObject GetEnemyAtPosition(Vector2Int pos)
+    {
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            if (enemy == null) continue;
 
+            Vector2Int ePos = gridManager.WorldToGrid(enemy.transform.position);
+            if (ePos == pos)
+                return enemy;
+        }
+        return null;
+    }
 
-    /// <summary>
-    /// 攻撃キャンセル
-    /// </summary>
+    // =========================
+    // 終了・後始末
+    // =========================
     public void CancelAttack()
     {
         Debug.Log($"{LOG_PREFIX} 攻撃キャンセル");
         FinishAttack();
     }
 
-    /// <summary>
-    /// 攻撃モード終了
-    /// </summary>
     private void FinishAttack()
     {
-        if (!isAttackMode) return; // 既に終了していれば何もしない
+        if (!isAttackMode) return;
 
         ClearTiles();
         currentEnemies.Clear();
@@ -238,24 +219,18 @@ public class NormalAttack : MonoBehaviour
         Debug.Log($"{LOG_PREFIX} 攻撃モード終了");
     }
 
-    /// <summary>
-    /// タイルの色をリセット
-    /// </summary>
     private void ClearTiles()
     {
         foreach (Tile tile in allAttackTiles.Values)
         {
-            if (tile != null)
-                tile.ResetColor();
+            tile?.ResetColor();
         }
-
         allAttackTiles.Clear();
     }
 
-    /// <summary>
-    /// デバッグ用：現在の状態を取得
-    /// </summary>
+    // =========================
+    // デバッグ用
+    // =========================
     public bool IsAttackMode() => isAttackMode;
     public Vector2Int GetCurrentDirection() => currentDir;
-    public int GetTargetCount() => currentEnemies.Count;
 }

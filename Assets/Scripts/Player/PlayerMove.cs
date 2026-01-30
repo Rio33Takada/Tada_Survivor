@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -10,24 +12,24 @@ public class PlayerMove : MonoBehaviour
     public TurnController turnController;
 
     [Header("Move Settings")]
-    [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float yOffset = 0.5f;
+    [SerializeField] private float moveDuration = 0.25f;
+    [SerializeField] private float rotateDuration = 0.15f;
+    [SerializeField] private int moveRange = 3;
     [SerializeField] private float doubleClickThreshold = 0.3f;
-    [SerializeField] private float positionThreshold = 0.01f;
-    [SerializeField] private int moveRange = 1;
 
     public bool isActionLocked = false;
 
-    public Vector2Int gridPos;
-    private Vector3 targetPos;
+    public Vector2Int gridPos { get; private set; }
+
     private bool isMoving = false;
     private bool canMove = false;
-    private float lastClickTime = 0f;
+    private float lastClickTime;
 
-    private HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
-    private Queue<Vector2Int> movePath = new Queue<Vector2Int>();
+    private HashSet<Vector2Int> reachableTiles = new();
+    private Queue<Vector2Int> movePath = new();
 
-    private static readonly Vector2Int[] MOVE_DIRECTIONS =
+    private static readonly Vector2Int[] MOVE_DIRS =
     {
         Vector2Int.up,
         Vector2Int.down,
@@ -35,7 +37,7 @@ public class PlayerMove : MonoBehaviour
         Vector2Int.right
     };
 
-    #region Unity Lifecycle
+    #region Unity
 
     private void Start()
     {
@@ -44,126 +46,35 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        if (isMoving)
-        {
-            UpdateMovement();
-        }
-        else if (CanAcceptInput())
-        {
-            HandleInput();
-        }
+        if (isMoving) return;
+        if (!CanAcceptInput()) return;
+
+        HandleInput();
     }
 
     #endregion
 
-    #region Initialization
+    #region Initialize
 
     private void InitializePlayer()
     {
         gridPos = Vector2Int.zero;
 
-        if (gridManager == null)
-        {
-            Debug.LogError($"{LOG_PREFIX} GridManagerが設定されていません");
-            return;
-        }
+        Tile start = gridManager.GetTileAt(gridPos);
+        transform.position = GetTilePosition(start);
 
-        Tile startTile = gridManager.GetTileAt(gridPos);
-        if (startTile != null)
-        {
-            targetPos = GetTilePosition(startTile);
-            transform.position = targetPos;
-            Debug.Log($"{LOG_PREFIX} プレイヤー初期化完了: {gridPos}");
-        }
-        else
-        {
-            Debug.LogError($"{LOG_PREFIX} 開始タイルが見つかりません: {gridPos}");
-        }
+        Debug.Log($"{LOG_PREFIX} 初期化完了 {gridPos}");
     }
 
     #endregion
 
-    #region Movement
-
-    private void UpdateMovement()
-    {
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            targetPos,
-            moveSpeed * Time.deltaTime
-        );
-
-        if (Vector3.Distance(transform.position, targetPos) < positionThreshold)
-        {
-            OnMoveComplete();
-        }
-    }
-
-    private void OnMoveComplete()
-    {
-        isMoving = false;
-
-        // まだ移動パスが残っている場合は次のステップへ
-        if (movePath.Count > 0)
-        {
-            MoveNextStep();
-            return;
-        }
-
-        // 移動完了
-        canMove = false;
-        ClearMovableTiles();
-
-        Debug.Log($"{LOG_PREFIX} 移動完了: {gridPos}");
-
-        if (turnController != null)
-        {
-            turnController.EndPlayerTurn();
-        }
-    }
-
-    private void MoveNextStep()
-    {
-        if (movePath.Count == 0)
-        {
-            Debug.LogWarning($"{LOG_PREFIX} 移動パスが空です");
-            return;
-        }
-
-        // 最初のステップでボタンをクリア
-        if (!isMoving && turnController != null)
-        {
-            turnController.ClearAllButtons();
-        }
-
-        Vector2Int nextPos = movePath.Dequeue();
-        Tile tile = gridManager.GetTileAt(nextPos);
-
-        // タイルが存在しない、または移動不可の場合は移動を中止
-        if (tile == null || !tile.Walkable)
-        {
-            Debug.LogWarning($"{LOG_PREFIX} 移動不可なタイル: {nextPos}");
-            movePath.Clear();
-            CancelMove();
-            return;
-        }
-
-        gridPos = nextPos;
-        targetPos = GetTilePosition(tile);
-        isMoving = true;
-
-        Debug.Log($"{LOG_PREFIX} 1マス移動: {gridPos}");
-    }
-
-    #endregion
-
-    #region Input Handling
+    #region Input
 
     private bool CanAcceptInput()
     {
-        return !isActionLocked
-            && turnController != null
-            && turnController.IsPlayerTurn;
+        return !isActionLocked &&
+               turnController != null &&
+               turnController.IsPlayerTurn;
     }
 
     private void HandleInput()
@@ -172,234 +83,223 @@ public class PlayerMove : MonoBehaviour
 
         if (canMove)
         {
-            TryMoveToMouseClick();
+            TryMoveByClick();
         }
         else if (IsPlayerClicked())
         {
-            HandlePlayerClick();
+            float interval = Time.time - lastClickTime;
+            if (interval < doubleClickThreshold)
+                EnableMoveMode();
+
+            lastClickTime = Time.time;
         }
-    }
-
-    private void HandlePlayerClick()
-    {
-        float timeSinceLastClick = Time.time - lastClickTime;
-
-        if (timeSinceLastClick < doubleClickThreshold)
-        {
-            EnableMoveMode();
-        }
-
-        lastClickTime = Time.time;
-    }
-
-    private void TryMoveToMouseClick()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
-
-        Tile clickedTile = hit.collider.GetComponent<Tile>();
-        if (clickedTile == null) return;
-
-        Vector2Int targetGridPos = clickedTile.gridPosition;
-
-        // 到達可能なタイルかチェック
-        if (!IsReachableTile(targetGridPos))
-        {
-            Debug.Log($"{LOG_PREFIX} 到達不可能なタイル: {targetGridPos}");
-            return;
-        }
-
-        BuildStraightPath(targetGridPos);
-        MoveNextStep();
     }
 
     private bool IsPlayerClicked()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            return hit.collider.gameObject == gameObject;
-        }
-
-        return false;
+        return Physics.Raycast(ray, out RaycastHit hit)
+               && hit.collider.gameObject == gameObject;
     }
 
     #endregion
 
-    #region Move Mode Control
+    #region Move Mode
 
-    /// <summary>
-    /// 移動モードを有効化
-    /// </summary>
-    public void EnableMoveMode()
+    private void EnableMoveMode()
     {
-        if (canMove)
-        {
-            Debug.Log($"{LOG_PREFIX} 既に移動モード中");
-            return;
-        }
-
         canMove = true;
         ShowMovableTiles();
-        Debug.Log($"{LOG_PREFIX} 移動モード開始");
+        Debug.Log($"{LOG_PREFIX} 移動モードON");
     }
 
-    /// <summary>
-    /// 移動をキャンセル
-    /// </summary>
     public void CancelMove()
     {
         canMove = false;
-        isMoving = false;
         movePath.Clear();
         ClearMovableTiles();
-
-        Debug.Log($"{LOG_PREFIX} 移動キャンセル");
     }
 
     #endregion
 
-    #region Pathfinding
+    #region Movement
 
-    /// <summary>
-    /// 直線経路を構築（縦→横の順）
-    /// </summary>
+    private void TryMoveByClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+
+        Tile tile = hit.collider.GetComponent<Tile>();
+        if (tile == null) return;
+
+        if (!reachableTiles.Contains(tile.gridPosition)) return;
+
+        BuildStraightPath(tile.gridPosition);
+        _ = MovePathAsync();
+    }
+
+    private async Task MovePathAsync()
+    {
+        isMoving = true;
+        canMove = false;
+        ClearMovableTiles();
+
+        while (movePath.Count > 0)
+        {
+            Vector2Int next = movePath.Dequeue();
+            Tile tile = gridManager.GetTileAt(next);
+
+            if (tile == null || !tile.Walkable)
+            {
+                CancelMove();
+                break;
+            }
+
+            Vector3 targetPos = GetTilePosition(tile);
+            Vector3 dir = targetPos - transform.position;
+            dir.y = 0f;
+
+            await RotateAsync(dir);
+            await MoveAsync(targetPos);
+
+            gridPos = next;
+        }
+
+        isMoving = false;
+        Debug.Log($"{LOG_PREFIX} 移動完了 {gridPos}");
+        turnController?.EndPlayerTurn();
+    }
+
+    #endregion
+
+    #region Animation
+
+    private Task RotateAsync(Vector3 forward)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        StartCoroutine(RotateCoroutine(forward, tcs));
+        return tcs.Task;
+    }
+
+    private IEnumerator RotateCoroutine(Vector3 forward, TaskCompletionSource<bool> tcs)
+    {
+        if (forward == Vector3.zero)
+        {
+            tcs.SetResult(true);
+            yield break;
+        }
+
+        Quaternion start = transform.rotation;
+        Quaternion target = Quaternion.LookRotation(forward);
+
+        float time = 0f;
+        while (time < rotateDuration)
+        {
+            time += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, time / rotateDuration);
+            transform.rotation = Quaternion.Slerp(start, target, t);
+            yield return null;
+        }
+
+        transform.rotation = target;
+        tcs.SetResult(true);
+    }
+
+    private Task MoveAsync(Vector3 targetPos)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        StartCoroutine(MoveCoroutine(targetPos, tcs));
+        return tcs.Task;
+    }
+
+    private IEnumerator MoveCoroutine(Vector3 target, TaskCompletionSource<bool> tcs)
+    {
+        Vector3 start = transform.position;
+        float time = 0f;
+
+        while (time < moveDuration)
+        {
+            time += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, time / moveDuration);
+            transform.position = Vector3.Lerp(start, target, t);
+            yield return null;
+        }
+
+        transform.position = target;
+        tcs.SetResult(true);
+    }
+
+    #endregion
+
+    #region Path / Tile
+
     private void BuildStraightPath(Vector2Int target)
     {
         movePath.Clear();
-
         Vector2Int current = gridPos;
 
-        // ① 縦方向を先に移動
         while (current.y != target.y)
         {
             current += current.y < target.y ? Vector2Int.up : Vector2Int.down;
             movePath.Enqueue(current);
         }
-
-        // ② 横方向を移動
         while (current.x != target.x)
         {
             current += current.x < target.x ? Vector2Int.right : Vector2Int.left;
             movePath.Enqueue(current);
         }
-
-        Debug.Log($"{LOG_PREFIX} 経路構築: {movePath.Count}マス");
     }
 
-    /// <summary>
-    /// 指定位置が到達可能かチェック
-    /// </summary>
-    private bool IsReachableTile(Vector2Int targetGridPos)
-    {
-        return reachableTiles.Contains(targetGridPos);
-    }
-
-    #endregion
-
-    #region Tile Display
-
-    /// <summary>
-    /// 移動可能なタイルを表示
-    /// </summary>
     private void ShowMovableTiles()
     {
-        ClearMovableTiles();
         reachableTiles.Clear();
+        Queue<(Vector2Int pos, int cost)> q = new();
+        HashSet<Vector2Int> visited = new();
 
-        Queue<(Vector2Int pos, int cost)> queue = new Queue<(Vector2Int, int)>();
-        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
-
-        queue.Enqueue((gridPos, 0));
+        q.Enqueue((gridPos, 0));
         visited.Add(gridPos);
 
-        while (queue.Count > 0)
+        while (q.Count > 0)
         {
-            var (currentPos, cost) = queue.Dequeue();
-
-            // 移動範囲を超えたら探索終了
+            var (pos, cost) = q.Dequeue();
             if (cost >= moveRange) continue;
 
-            foreach (Vector2Int dir in MOVE_DIRECTIONS)
+            foreach (var d in MOVE_DIRS)
             {
-                Vector2Int nextPos = currentPos + dir;
+                Vector2Int next = pos + d;
+                if (visited.Contains(next)) continue;
 
-                // 既に訪問済みならスキップ
-                if (visited.Contains(nextPos)) continue;
+                Tile t = gridManager.GetTileAt(next);
+                if (t == null || !t.Walkable) continue;
 
-                Tile tile = gridManager.GetTileAt(nextPos);
-                if (tile == null) continue;
-
-                // 移動不可なタイルはスキップ（敵や障害物がいる）
-                if (!tile.Walkable) continue;
-
-                // タイルを移動可能として表示
-                tile.SetMovableColor(true);
-                reachableTiles.Add(nextPos);
-
-                visited.Add(nextPos);
-                queue.Enqueue((nextPos, cost + 1));
+                t.SetMovableColor(true);
+                reachableTiles.Add(next);
+                visited.Add(next);
+                q.Enqueue((next, cost + 1));
             }
         }
-
-        Debug.Log($"{LOG_PREFIX} 移動可能範囲: {reachableTiles.Count}マス");
     }
 
-    /// <summary>
-    /// 移動可能タイルの表示をクリア
-    /// </summary>
     private void ClearMovableTiles()
     {
-        if (gridManager == null) return;
-
-        Tile[,] allTiles = gridManager.GetAllTiles();
-        if (allTiles == null) return;
-
-        int width = allTiles.GetLength(0);
-        int height = allTiles.GetLength(1);
-
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (allTiles[x, y] != null)
-                {
-                    allTiles[x, y].SetMovableColor(false);
-                }
-            }
-        }
+        foreach (Tile t in gridManager.GetAllTiles())
+            if (t != null) t.SetMovableColor(false);
 
         reachableTiles.Clear();
     }
 
     #endregion
 
-    #region Utility
+    #region Utility / API
 
     private Vector3 GetTilePosition(Tile tile)
     {
-        return tile.transform.position + new Vector3(0, yOffset, 0);
+        return tile.transform.position + Vector3.up * yOffset;
     }
 
-    #endregion
-
-    #region Public API
-
-    public Vector2Int GetGridPosition()
-    {
-        return gridPos;
-    }
-
-    public bool IsMoving()
-    {
-        return isMoving;
-    }
-
-    public bool IsMoveMode()
-    {
-        return canMove;
-    }
+    public Vector2Int GetGridPosition() => gridPos;
+    public bool IsMoving() => isMoving;
+    public bool IsMoveMode() => canMove;
 
     #endregion
 }
