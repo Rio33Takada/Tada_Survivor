@@ -12,6 +12,7 @@ public class NormalAttack : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private PlayerMove playerMove;
     [SerializeField] private TurnController turnController;
+    [SerializeField] private PlayerStatus playerStatus;
 
     private bool isAttackMode = false;
     private Vector2Int currentDir = Vector2Int.up;
@@ -195,20 +196,24 @@ public class NormalAttack : MonoBehaviour
         if (!currentEnemies.ContainsKey(pos)) return;
 
         GameObject enemy = currentEnemies[pos];
-        if (enemy == null)
-        {
-            Debug.LogWarning($"{LOG_PREFIX} 敵が既に存在しません");
-            return;
-        }
+        if (enemy == null) return;
 
         BattleEnemy be = enemy.GetComponent<BattleEnemy>();
-        if (be != null)
+        if (be == null) return;
+
+        be.TakeDamage(DAMAGE);
+        Debug.Log($"{LOG_PREFIX} 敵に{DAMAGE}ダメージ");
+
+        // ★ 攻撃成功でSP＋1
+        if (playerStatus != null)
         {
-            be.TakeDamage(DAMAGE);
-            Debug.Log($"{LOG_PREFIX} 敵に{DAMAGE}ダメージ at {pos}");
-            turnController.EndPlayerTurn();
+            playerStatus.RestoreSP(1);
         }
+
+        turnController.EndPlayerTurn();
     }
+
+
 
     /// <summary>
     /// 攻撃キャンセル

@@ -5,90 +5,128 @@ using System.Threading.Tasks;
 
 public class BattleEnemyController
 {
-    private BattleEnemyFactory enemyFactory;
-    private GridManager gridManager;
-    private PlayerMove player;
-    private PlayerStatus playerStatus;
-    private UIManager uiManager;
+    private readonly BattleEnemyFactory enemyFactory;
+    private readonly GridManager gridManager;
+    private readonly PlayerMove player;
+    private readonly PlayerStatus playerStatus;
+    private readonly UIManager uiManager;
 
-    public List<BattleEnemy> EnemyList { get; private set; }
+    // 敵リスト（外部参照OKだが、削除はこのクラスのみ）
+    public List<BattleEnemy> EnemyList { get; } = new();
 
-    // コンストラクタで UIManager を受け取る
-    public BattleEnemyController(GridManager grid, EnemyPrefabHolder holder, PlayerMove player, PlayerStatus status, UIManager ui)
+    // =========================
+    // Constructor
+    // =========================
+    public BattleEnemyController(
+        GridManager grid,
+        EnemyPrefabHolder holder,
+        PlayerMove player,
+        PlayerStatus status,
+        UIManager ui)
     {
-        enemyFactory = new BattleEnemyFactory(holder, this, grid);
         gridManager = grid;
         this.player = player;
         playerStatus = status;
-        uiManager = ui; // ここが重要
+        uiManager = ui;
 
-        EnemyList = new List<BattleEnemy>();
+        enemyFactory = new BattleEnemyFactory(holder, this, gridManager);
     }
 
+    // =========================
+    // Enemy Management
+    // =========================
     public void AddEnemy(BattleEnemy enemy)
     {
         if (enemy == null)
         {
-            Debug.LogError("enemy is null");
+            Debug.LogError("[BattleEnemyController] enemy is null");
             return;
         }
-        EnemyList.Add(enemy);
 
+        if (EnemyList.Contains(enemy)) return;
+
+        EnemyList.Add(enemy);
         enemy.OnDeath += HandleEnemyDeath;
     }
 
     public void SpawnEnemy(EnemyType type, Vector2Int pos)
     {
         var enemy = enemyFactory.CreateBattleEnemy(type, pos);
+        if (enemy == null) return;
+
         enemy.SetPlayerStatus(playerStatus);
+        AddEnemy(enemy);
     }
 
+    // =========================
+    // Enemy Turn Actions
+    // =========================
     public async Task MoveEnemyAsync()
     {
-        foreach (BattleEnemy enemy in EnemyList)
+        // ★ async中にListが変わっても安全
+        var snapshot = EnemyList.ToArray();
+
+        foreach (BattleEnemy enemy in snapshot)
         {
+            if (enemy == null || enemy.IsDead) continue;
+
             await enemy.MoveAsync(player.gridPos, gridManager);
         }
     }
 
-    public async Task AttackEnemy()
+    public async Task AttackEnemyAsync()
     {
-        foreach (BattleEnemy enemy in EnemyList)
+        var snapshot = EnemyList.ToArray();
+
+        foreach (BattleEnemy enemy in snapshot)
         {
+            if (enemy == null || enemy.IsDead) continue;
+
             await enemy.Attack(player.gridPos);
         }
     }
 
-
+    // =========================
+    // Damage Handling
+    // =========================
     public void DamageEnemy(List<GameObject> enemies)
     {
-        foreach (GameObject enemy in enemies)
+        foreach (GameObject obj in enemies)
         {
-            var be = enemy.GetComponent<BattleEnemy>();
-            if (be != null)
+            if (obj == null) continue;
+
+            var enemy = obj.GetComponent<BattleEnemy>();
+            if (enemy != null)
             {
-                be.TakeDamage(1);
+                enemy.TakeDamage(1);
             }
         }
-
-        // 死亡済みの敵を EnemyList から削除
-        EnemyList.RemoveAll(e => e.IsDead);
-
-        // 敵が0になったらゲームクリア
-        if (EnemyList.Count <= 0 && uiManager != null)
-        {
-            uiManager.OnGameClear();
-        }
+        // ★ EnemyListはここでは触らない（OnDeathに集約）
     }
 
+    // =========================
+    // Death Handling
+    // =========================
     private void HandleEnemyDeath(BattleEnemy enemy)
     {
-        EnemyList.Remove(enemy);
+        if (enemy == null) return;
 
-        // 敵が0になったらゲームクリア
-        if (EnemyList.Count <= 0 && uiManager != null)
+        enemy.OnDeath -= HandleEnemyDeath;
+
+        if (EnemyList.Contains(enemy))
         {
-            uiManager.OnGameClear();
+            EnemyList.Remove(enemy);
+        }
+
+        // ★ 全滅チェックはここだけ
+        if (EnemyList.Count <= 0)
+        {
+            Debug.Log("[BattleEnemyController] All enemies defeated");
+
+            if (uiManager != null)
+            {
+                uiManager.OnGameClear();
+            }
         }
     }
 }

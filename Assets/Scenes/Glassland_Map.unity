@@ -692,6 +692,8 @@ MonoBehaviour:
   playerStatus: {fileID: 1109390386}
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
+  turnController: {fileID: 299829452}
+  doubleClickTime: 0.3
 --- !u!114 &1109390391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -706,6 +708,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
+  turnController: {fileID: 299829452}
+  playerStatus: {fileID: 1109390386}
 --- !u!1 &1169379194
 GameObject:
   m_ObjectHideFlags: 0

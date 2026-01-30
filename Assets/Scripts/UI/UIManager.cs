@@ -79,6 +79,8 @@ public class UIManager : MonoBehaviour
         CreateMainCommandButtons();
     }
 
+
+
     #endregion
 
     #region Input Handling
@@ -379,6 +381,7 @@ public class UIManager : MonoBehaviour
     {
         SetWaveCountText(wave);
     }
+
 
     public void OnGameOver()
     {

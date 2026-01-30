@@ -34,18 +34,24 @@ public class PlayerStatus : MonoBehaviour
 
         currentSP -= amount;
         Debug.Log($"[PlayerStatus] SPÁ”ï: {amount} / c‚èSP: {currentSP}");
+
+        if (uiManager != null)
+        {
+            uiManager.SetSkillPoint(currentSP); 
+        }
+
         return true;
     }
+
     public void RestoreSP(int amount)
     {
-        currentSP = Mathf.Min(currentSP + amount, maxSP);
-        Debug.Log($"[PlayerStatus] SP‰ñ•œ: +{amount} (Œ»İ: {currentSP}/{maxSP})");
-    }
+        currentSP = Mathf.Clamp(currentSP + amount, 0, maxSP);
+        Debug.Log($"[PlayerStatus] SP‰ñ•œ: +{amount} ({currentSP}/{maxSP})");
 
-    public void RecoverSP(int amount)
-    {
-        currentSP = Mathf.Min(maxSP, currentSP + amount);
-        Debug.Log($"[PlayerStatus] SP‰ñ•œ: {amount} / Œ»İSP: {currentSP}");
+        if (uiManager != null)
+        {
+            uiManager.SetSkillPoint(currentSP);
+        }
     }
 
     public void TakeDamage(int amount)

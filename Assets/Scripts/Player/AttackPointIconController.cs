@@ -16,16 +16,12 @@ public class AttackPointIconController : MonoBehaviour
 
     public void AttackPointSet(int point)
     {
+        Debug.Log($"[AttackPointIcon] point = {point}");
+
         for (int i = 0; i < images.Length; i++)
         {
-            if (i + 1 <= point)
-            {
-                images[i].sprite = existPoint;
-            }
-            else
-            {
-                images[i].sprite = noPoint;
-            }
+            images[i].sprite = (i + 1 <= point) ? existPoint : noPoint;
         }
     }
+
 }
