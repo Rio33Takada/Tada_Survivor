@@ -6,6 +6,8 @@ public class SoundManager : MonoBehaviour
 
     public SoundList soundList;
 
+    public SEList seList;
+
     public enum BGMType
     {
         Title,
@@ -13,6 +15,14 @@ public class SoundManager : MonoBehaviour
         Volcano,
         GameClear,
         GameOver,
+    }
+
+    public enum SEType
+    {
+        ArcherAttack,
+        BomberAttack,
+        KnightAttack,
+        PlayerAttack,
     }
 
     void Awake()
@@ -45,6 +55,27 @@ public class SoundManager : MonoBehaviour
                 source.Play();
                 break;
             default:
+                break;
+        }
+    }
+
+    public void PlaySE(SEType type)
+    {
+        switch (type)
+        {
+            case SEType.ArcherAttack:
+                source.PlayOneShot(seList.ArcherAttack);
+                break;
+            case SEType.BomberAttack:
+                source.PlayOneShot(seList.BomberAttack);
+                break;
+            case SEType.KnightAttack:
+                source.PlayOneShot(seList.KnightAttack);
+                break;
+            case SEType.PlayerAttack:
+                source.PlayOneShot(seList.PlayerAttack);
+                break;
+            default :
                 break;
         }
     }

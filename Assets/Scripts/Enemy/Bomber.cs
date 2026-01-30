@@ -16,6 +16,7 @@ public class Bomber : BattleEnemy
                 Debug.Log("BomberはPlayerに攻撃した"); // プレイヤーにダメージ.
                 PlayAttackAnimation();
                 await WaitAttackAnimation();
+                GameObject.Find("BGM").GetComponent<SoundManager>().PlaySE(SoundManager.SEType.BomberAttack);
                 player.TakeDamage(1);
                 return;
             }

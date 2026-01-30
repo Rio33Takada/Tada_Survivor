@@ -33,6 +33,7 @@ public class Archer : BattleEnemy
                 Debug.Log("ArcherはPlayerに攻撃した"); // プレイヤーにダメージ.
                 PlayAttackAnimation();
                 await WaitAttackAnimation();
+                GameObject.Find("BGM").GetComponent<SoundManager>().PlaySE(SoundManager.SEType.ArcherAttack);
                 player.TakeDamage(1);
                 return;
             }

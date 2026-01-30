@@ -362,6 +362,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4128032085664588840, guid: df820b99a45c86f40a6eea9cc114e7df, type: 3}
+      propertyPath: seList
+      value: 
+      objectReference: {fileID: 11400000, guid: 10c10fbe05e9c9846b957117b05eca7e, type: 2}
     - target: {fileID: 6326689095374220328, guid: df820b99a45c86f40a6eea9cc114e7df, type: 3}
       propertyPath: m_Resource
       value: 
@@ -617,6 +621,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
+  turnController: {fileID: 0}
+  playerStatus: {fileID: 0}
 --- !u!114 &975643129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,6 +638,8 @@ MonoBehaviour:
   playerStatus: {fileID: 975643127}
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
+  turnController: {fileID: 0}
+  doubleClickTime: 0.3
 --- !u!114 &975643130
 MonoBehaviour:
   m_ObjectHideFlags: 0
