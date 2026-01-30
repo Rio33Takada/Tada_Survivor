@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Bomber : BattleEnemy
 {
+    private ParticleSystem particle;
     protected override int BaseMaxHp => 1;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        particle = GetComponent<ParticleSystem>();
+    }
 
     public override async Task Attack(Vector2Int playerPos)
     {
@@ -21,6 +28,12 @@ public class Bomber : BattleEnemy
                 return;
             }
         }
+    }
+
+    protected override void PlayDeathAnimation()
+    {
+        base.PlayDeathAnimation();
+        particle.Play();
     }
 
     protected override async Task Death()

@@ -220,11 +220,11 @@ namespace takada
             tcs.SetResult(true);
         }
 
-        public void TakeDamage(int amount)
+        public async Task TakeDamage(int amount)
         {
             Hp -= amount;
             if (!IsAlive)
-                Death();
+                await Death();
         }
 
         //public virtual void Death()
@@ -249,13 +249,13 @@ namespace takada
             animator.SetTrigger("Attack");
         }
 
-        protected void PlayDeathAnimation()
+        protected virtual void PlayDeathAnimation()
         {
             if (animator == null) return;
             animator.SetTrigger("Death");
         }
 
-        protected async Task WaitAttackAnimation(float time = 0.4f)
+        protected async Task WaitAttackAnimation(float time = 1f)
         {
             await Task.Delay((int)(time * 1000));
         }
