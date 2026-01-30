@@ -654,7 +654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   turnController: {fileID: 299829452}
-  trapPrefab: {fileID: 4728997390902293215, guid: 85770d5fe5ee16643bc2d5198a7c4e2c, type: 3}
+  trapPrefab: {fileID: 5077531802077677251, guid: 49d11e560f3970449bcb78462386cc7c, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!65 &975643131
 BoxCollider:
