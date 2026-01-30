@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: EnemyPrefabHolder
   m_EditorClassIdentifier: 
   enemyPrefabs:
-  - type: 0
-    prefab: {fileID: 7126325223695550572, guid: 8bfb654e67e864744afe6fac17017a64, type: 3}
+  - type: 1
+    prefab: {fileID: 1515208045668638603, guid: c735b8b7760c538418dbe131d7da6a52, type: 3}
   - type: 1
     prefab: {fileID: 9182674604688179931, guid: df34a18be926c9e409e98d008173a6c4, type: 3}
   - type: 2
