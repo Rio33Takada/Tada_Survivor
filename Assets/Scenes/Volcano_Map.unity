@@ -621,8 +621,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
-  turnController: {fileID: 0}
-  playerStatus: {fileID: 0}
+  turnController: {fileID: 299829452}
+  playerStatus: {fileID: 975643127}
 --- !u!114 &975643129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,7 +638,7 @@ MonoBehaviour:
   playerStatus: {fileID: 975643127}
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
-  turnController: {fileID: 0}
+  turnController: {fileID: 299829452}
   doubleClickTime: 0.3
 --- !u!114 &975643130
 MonoBehaviour:
@@ -654,7 +654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 299829450}
   turnController: {fileID: 299829452}
-  trapPrefab: {fileID: 919132149155446097, guid: 546dd97e3662a904eb6b5d1928d01155, type: 3}
+  trapPrefab: {fileID: 4728997390902293215, guid: 85770d5fe5ee16643bc2d5198a7c4e2c, type: 3}
   selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
 --- !u!65 &975643131
 BoxCollider:
