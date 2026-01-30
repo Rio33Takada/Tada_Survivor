@@ -6,15 +6,14 @@ using UnityEngine.UI;
 
 public class TextType : MonoBehaviour
 {
+    public GameObject skipbutton;
     public Text messageText;
-    public float TypeSpeed = 0.04f; //表示速度
-    //public float fadetime = 1f;
-    //public Image fadeimage;
-    private bool isTyping;
-    private bool isTyped;
+    public float TypeSpeed = 0.04f; 　　//表示速度
+    private bool isTyping; 　　　　　　//入力中かどうか
+    private bool isTyped;  　　　　　　//入力が終了したかどうか
     [SerializeField]
-    private int currentIndex = 0;
-    private string[] message =
+    public int currentIndex = 0; 　　//何文目か
+    private string[] message = 　　　//文章
     {
         //\nで改行
         "かつて、この大陸の中央には \r\n強大な国家――バシコン帝国が君臨していた。",
@@ -54,21 +53,6 @@ public class TextType : MonoBehaviour
         isTyping = false;
     }
 
-    //フェードアウト
-    //public IEnumerator FadeOut()
-    //{
-    //    float t = 0;
-    //    Color fadeC = fadeimage.color;
-
-    //    while (t < fadetime) 
-    //    {
-    //        t += Time.deltaTime;
-    //        fadeC.a = Mathf.Lerp(1f, 0f, t / fadetime);
-    //        fadeimage.color = fadeC;
-    //        yield return null;
-    //    }
-    //}
-
     void Update()
     {
         if ((currentIndex <= message.Length - 1))
@@ -94,6 +78,7 @@ public class TextType : MonoBehaviour
         }
         else
         {
+            skipbutton.SetActive(false);
             StartCoroutine(delay());
         }
 

@@ -1,23 +1,19 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System;
 
-public class Title_StartButton : MonoBehaviour
+public class FadeText : MonoBehaviour
 {
-    public GameObject button;
-    public GameObject text;
-    public Image FadeImage; //フェードイメージを入れる
-    public GameObject img;
-    public float fadetime;
-    public TextType texttype;
+    [SerializeField]
+    private float fadetime;
+    [SerializeField]
+    private Image FadeImage;
 
-    //ストーリー（？）文章画面表示
-    public void OnTitileButton()
+    void Start()
     {
         StartCoroutine(Fadeout());
-        img.SetActive(true);
     }
 
     public IEnumerator Fadeout()
@@ -38,10 +34,5 @@ public class Title_StartButton : MonoBehaviour
         c.a = targetAlpha;
         FadeImage.color = c;
         yield return new WaitForSeconds(0.5f);
-
-        text.SetActive(true);
-        button.SetActive(true);
-
-        texttype.StartButton();
     }
 }
