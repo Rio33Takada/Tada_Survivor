@@ -545,11 +545,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 157.4
+      value: 174
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -56
+      value: -62
       objectReference: {fileID: 0}
     - target: {fileID: 8556690573982467051, guid: c1c1a8d0e43136f4fa008ea2b8d4f1b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d32f9b879334a4085958c92dcdf6e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSP: 5
+  maxSP: 3
   currentSP: 0
   maxHP: 3
   currentHP: 0
@@ -635,10 +635,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94af39d041b01fa4ebf73a94ee5441c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStatus: {fileID: 975643127}
   gridManager: {fileID: 299829450}
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
+  playerStatus: {fileID: 975643127}
+  rangeForward: 2
+  rangeSide: 1
   doubleClickTime: 0.3
 --- !u!114 &975643130
 MonoBehaviour:
@@ -974,6 +976,18 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.63085693
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.63085693
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.63085693
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -983,7 +997,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.0572243
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1003,11 +1017,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 73
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 115
+      value: 924
       objectReference: {fileID: 0}
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1020,6 +1034,10 @@ PrefabInstance:
     - target: {fileID: 4049987051476274979, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817584691473873897, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
+      propertyPath: images.Array.size
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5872102927104591709, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
       propertyPath: m_Name
@@ -1074,7 +1092,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3346009022279451568, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
+    - {fileID: 7415235126180884135, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
