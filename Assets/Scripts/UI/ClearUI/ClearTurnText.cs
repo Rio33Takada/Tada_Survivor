@@ -7,6 +7,7 @@ public class ClearTurnText : MonoBehaviour
     string textname;
     public float fadetime;
     public GameObject next_text;
+    public TurnController turncontroller;
 
     public Text numberText; // Text コンポーネントをアサイン
     public int targetNumber; // 最終的に表示する目標の数字(ターン数)
@@ -15,6 +16,8 @@ public class ClearTurnText : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        turncontroller = GameObject.Find("GameObject").GetComponent<TurnController>();
+        targetNumber = turncontroller.turnNum;
         textname = numberText.text;
         StartCoroutine(Fadeout());
     }

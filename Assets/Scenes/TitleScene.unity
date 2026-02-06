@@ -729,7 +729,7 @@ MonoBehaviour:
   text: {fileID: 328333182}
   FadeImage: {fileID: 963467123}
   img: {fileID: 963467121}
-  fadetime: 1
+  fadetime: 1.5
   texttype: {fileID: 328333186}
 --- !u!1 &922870607
 GameObject:

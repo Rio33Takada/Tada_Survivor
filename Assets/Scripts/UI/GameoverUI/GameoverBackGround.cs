@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameoverBackGround : MonoBehaviour
 {
-    public float fadetime;
+    public float fadetime;　//フェード時間
     public Image fadeImage;
     public GameObject obj;
 

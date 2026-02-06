@@ -6,6 +6,7 @@ using System;
 
 public class Title_StartButton : MonoBehaviour
 {
+    private SoundManager soundManager;
     public GameObject button;
     public GameObject text;
     public Image FadeImage; //フェードイメージを入れる
@@ -13,13 +14,16 @@ public class Title_StartButton : MonoBehaviour
     public float fadetime;
     public TextType texttype;
 
-    //ストーリー（？）文章画面表示
+    //ストーリー文章画面表示
     public void OnTitileButton()
     {
+        soundManager = GameObject.Find("BGM").GetComponent<SoundManager>();
+        soundManager.PlaySE(SoundManager.SEType.Select);
         StartCoroutine(Fadeout());
         img.SetActive(true);
     }
 
+    //フェードアウト
     public IEnumerator Fadeout()
     {
         float t = 0;
@@ -37,7 +41,7 @@ public class Title_StartButton : MonoBehaviour
 
         c.a = targetAlpha;
         FadeImage.color = c;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         text.SetActive(true);
         button.SetActive(true);
