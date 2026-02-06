@@ -7,6 +7,8 @@ public class Archer : BattleEnemy
 {
     protected override int BaseMaxHp => 1;
 
+    private ParticleSystem particle;
+
     protected override Vector2Int[] Dirs { get; } =
     {
         new Vector2Int(2, 1),
@@ -38,5 +40,11 @@ public class Archer : BattleEnemy
                 return;
             }
         }
+    }
+
+    protected override void PlayDeathAnimation()
+    {
+        base.PlayDeathAnimation();
+        particle.Play();
     }
 }
