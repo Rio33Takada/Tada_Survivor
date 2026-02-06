@@ -25,6 +25,12 @@ public class Archer : BattleEnemy
         new Vector2Int(1, 2),
     };
 
+    protected override void Awake()
+    {
+        base.Awake();
+        particle = GetComponent<ParticleSystem>();
+    }
+
     public override async Task Attack(Vector2Int playerPos)
     {
         foreach (var d in Dirs)
