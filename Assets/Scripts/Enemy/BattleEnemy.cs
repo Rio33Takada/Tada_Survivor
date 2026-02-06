@@ -23,12 +23,11 @@ namespace takada
         public int Hp { get; private set; }
 
         public Vector2Int GridPosition { get; private set; }
-        private bool hasPosition = false; // ★ 追加：初期配置判定
+        private bool hasPosition = false;
 
         public bool IsAlive => Hp > 0;
         public bool IsDead { get; private set; }
 
-        // ★ 移動スキップ
         protected int skipMoveTurn = 0;
 
         protected virtual Vector2Int[] Dirs { get; } =
@@ -55,7 +54,6 @@ namespace takada
 
         public void SetPosition(Vector2Int pos, GridManager grid)
         {
-            // ★ 初回は前のタイルを触らない
             if (hasPosition)
             {
                 var prevTile = grid.GetTileAt(GridPosition);
@@ -73,7 +71,6 @@ namespace takada
             transform.position = new Vector3(pos.x, 0, pos.y);
         }
 
-        // ★ トラップから呼ばれる
         public void SetSkipMove(int turn)
         {
             skipMoveTurn = Mathf.Max(skipMoveTurn, turn);
@@ -90,7 +87,7 @@ namespace takada
                 goals.Add(pos);
 
                 if (GridPosition == pos)
-                    return null; // すでに隣
+                    return null;
             }
 
             List<Vector2Int> bestPath = null;
@@ -114,7 +111,6 @@ namespace takada
 
         public virtual async Task MoveAsync(Vector2Int playerPos, GridManager grid)
         {
-            // ★ トラップ停止
             if (skipMoveTurn > 0)
             {
                 skipMoveTurn--;
@@ -152,7 +148,6 @@ namespace takada
 
             SetPosition(nextPos, grid);
 
-            // 移動後の向き調整
             bestPath = GetPath(grid, playerPos);
             moveDir = bestPath == null
                 ? new Vector3(playerPos.x, 0, playerPos.y) - transform.position
@@ -226,16 +221,6 @@ namespace takada
             if (!IsAlive)
                 await Death();
         }
-
-        //public virtual void Death()
-        //{
-        //    if (IsDead) return;
-
-        //    IsDead = true;
-        //    Debug.Log($"{name} は死んだ");
-        //    OnDeath?.Invoke(this);
-        //    Destroy(gameObject);
-        //}
 
         public virtual async Task Attack(Vector2Int playerPos)
         {
