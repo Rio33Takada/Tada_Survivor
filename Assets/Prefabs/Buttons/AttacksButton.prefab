@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6294331256393428341}
   - component: {fileID: 4765176681661999273}
   - component: {fileID: 8256883270843535604}
+  - component: {fileID: 930816652036050687}
   m_Layer: 5
   m_Name: AttacksButton
   m_TagString: Untagged
@@ -120,3 +121,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &930816652036050687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3537584245998133698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a0eb8b274c48e848b8bc2ce6780b3c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioNum: 0
+  AudioClipList:
+  - {fileID: 0}
