@@ -8,14 +8,14 @@ public class TextType : MonoBehaviour
 {
     public GameObject skipbutton;
     public Text messageText;
-    public float TypeSpeed = 0.04f; 　　//表示速度
-    private bool isTyping; 　　　　　　//入力中かどうか
-    private bool isTyped;  　　　　　　//入力が終了したかどうか
+    public float TypeSpeed = 0.04f;     //表示速度
+    private bool isTyping;              //入力中かどうか
+    private bool isTyped;  　　　　　　 //入力が終了したかどうか
     [SerializeField]
-    public int currentIndex = 0; 　　//何文目か
-    private string[] message = 　　　//文章
+    public int currentIndex = 0; 　　　 //何文目か
+    private string[] message = 　　　　 //文章
     {
-        //\nで改行
+        //\nで改行 ストーリー文章
         "かつて、この大陸の中央には \r\n強大な国家――バシコン帝国が君臨していた。",
         "帝国を治めるのは、\r\nバシ・コシコーン三世。\r\n彼は己の欲望こそが正義と信じる、\r\n独善的かつ冷酷な帝王であった。",
         "些細な失言すら「不敬」として切り捨てられ、\r\n気に入らぬ家臣や民は即刻処刑。\r\nさらに、生活を顧みぬ重税が課され、\r\n帝国の政治は完全な独裁へと堕ちていく。",

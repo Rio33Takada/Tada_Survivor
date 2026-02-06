@@ -13,13 +13,14 @@ public class Title_StartButton : MonoBehaviour
     public float fadetime;
     public TextType texttype;
 
-    //ストーリー（？）文章画面表示
+    //ストーリー文章画面表示
     public void OnTitileButton()
     {
         StartCoroutine(Fadeout());
         img.SetActive(true);
     }
 
+    //フェードアウト
     public IEnumerator Fadeout()
     {
         float t = 0;
