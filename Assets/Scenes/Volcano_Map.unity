@@ -255,6 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc80c5f1943ea1d47bbe22afee4187ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnNum: 0
   uiManager: {fileID: 299829453}
   enemyTurnDuration: 1.5
 --- !u!114 &299829453
