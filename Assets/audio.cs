@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class audio : MonoBehaviour
 {
-    public int AudioNum;
-    public List<AudioClip> AudioClipList;
+    public SoundManager SoundManager;
 
-    public void OnButton()
+    private void Awake()
     {
-        if (AudioNum == 0)
-        {
-
-        }
-
+        SoundManager = GameObject.Find("BGM").GetComponent<SoundManager>();
+    }
+    public void OnAudio()
+    {
+        SoundManager.PlaySE(SoundManager.SEType.Select);
     }
 }

@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour
         BomberAttack,
         KnightAttack,
         PlayerAttack,
+        Select,
     }
 
     void Awake()
@@ -74,6 +75,9 @@ public class SoundManager : MonoBehaviour
                 break;
             case SEType.PlayerAttack:
                 source.PlayOneShot(seList.PlayerAttack);
+                break;
+            case SEType.Select:
+                source.PlayOneShot(seList.Select);
                 break;
             default :
                 break;

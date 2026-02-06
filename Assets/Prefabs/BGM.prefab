@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soundList: {fileID: 11400000, guid: 91c5cb22442752348b509756643faf23, type: 2}
+  seList: {fileID: 11400000, guid: 10c10fbe05e9c9846b957117b05eca7e, type: 2}
 --- !u!82 &6326689095374220328
 AudioSource:
   m_ObjectHideFlags: 0
@@ -61,7 +62,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
