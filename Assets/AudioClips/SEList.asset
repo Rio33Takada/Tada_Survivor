@@ -17,3 +17,4 @@ MonoBehaviour:
   KnightAttack: {fileID: 8300000, guid: 2c2e63e202cf8c24193d33e995156278, type: 3}
   PlayerAttack: {fileID: 8300000, guid: 2c2e63e202cf8c24193d33e995156278, type: 3}
   Select: {fileID: 8300000, guid: a98e70eff8168b540868c6b574627acc, type: 3}
+  Select2: {fileID: 8300000, guid: 84b2286ad880aba4bb776b40423a3a66, type: 3}

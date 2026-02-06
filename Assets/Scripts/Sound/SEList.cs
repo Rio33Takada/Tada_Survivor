@@ -8,4 +8,5 @@ public class SEList : ScriptableObject
     public AudioClip KnightAttack;
     public AudioClip PlayerAttack;
     public AudioClip Select;
+    public AudioClip Select2;
 }
