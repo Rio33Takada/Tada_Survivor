@@ -4,6 +4,7 @@ public class TurnController : MonoBehaviour
 {
     public bool IsPlayerTurn { get; private set; } = true;
 
+    public int turnNum;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private float enemyTurnDuration = 1.5f;
 
@@ -71,6 +72,7 @@ public class TurnController : MonoBehaviour
     private void EndEnemyTurn()
     {
         Debug.Log("敵ターン終了 → プレイヤーターンへ");
+        turnNum++;
         StartPlayerTurn();
     }
     private void GameOver()

@@ -15,7 +15,7 @@ MonoBehaviour:
   spawnList:
   - position: {x: 8, y: 9}
     enemyType: 1
-  - position: {x: 4, y: 7}
+  - position: {x: 7, y: 9}
     enemyType: 1
   - position: {x: 5, y: 6}
     enemyType: 2

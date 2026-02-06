@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadetime: 0.2
-  next_text: {fileID: 2081987552881712377}
+  next_text: {fileID: 7875149340659310187}
   numberText: {fileID: 1721008570875140952}
   targetNumber: 0
   duration: 0.5
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadetime: 0.3
   text: {fileID: 1398021670750667533}
-  next_text: {fileID: 7875149340659310187}
+  next_text: {fileID: 4359286151112039169}
 --- !u!1 &7384861760542498883
 GameObject:
   m_ObjectHideFlags: 0
