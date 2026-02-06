@@ -182,6 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc80c5f1943ea1d47bbe22afee4187ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnNum: 0
   uiManager: {fileID: 632727691}
   enemyTurnDuration: 1.5
 --- !u!114 &299829454
@@ -201,8 +202,11 @@ MonoBehaviour:
   turnController: {fileID: 299829452}
   commandController: {fileID: 684568143}
   player: {fileID: 530873857}
+  playerStatus: {fileID: 0}
   initialAttackPoint: 3
   initialMovePoint: 5
+  enemyPrefabHolder: {fileID: 0}
+  enemySpawn: {fileID: 0}
 --- !u!114 &530873857 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1432325422527430320, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
@@ -244,24 +248,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMove: {fileID: 530873857}
+  playerStatus: {fileID: 0}
   turnController: {fileID: 299829452}
   mainCanvas: {fileID: 1285516938}
   buttonContainer: {fileID: 1169379195}
   remainEnemyCountText: {fileID: 1445908444}
   waveCountText: {fileID: 1428658024}
-  attackPointIconsPrefab: {fileID: 5872102927104591709, guid: 30115917594903e4f8aa49ef4941567c, type: 3}
   buttonPrefabs:
   - {fileID: 3537584245998133698, guid: 2c92acc8f78f8c44fac5cf9756884100, type: 3}
   - {fileID: 3537584245998133698, guid: 89ed9af213fcaa341bc000241dc5167f, type: 3}
   - {fileID: 3537584245998133698, guid: f4ced6a86ce40b545a88b2541468c1d4, type: 3}
   - {fileID: 3537584245998133698, guid: 53a820ea1189e3a41a4c130e2155e351, type: 3}
   - {fileID: 3537584245998133698, guid: 12a60ff8bb2329a4c89d008ba3ae32d5, type: 3}
+  GameoverUI: {fileID: 0}
+  GameClearUI: {fileID: 0}
   attackButtonPos: {x: 600, y: 0}
   trapButtonPos: {x: 600, y: -100}
   endButtonPos: {x: 600, y: -200}
   normalAttackButtonPos: {x: 600, y: -100}
   specialAttackButtonPos: {x: 600, y: -200}
-  attackPointIconsPos: {x: -650, y: -350}
+  attackPointIcons: {fileID: 0}
+  hpIcons: {fileID: 0}
+  soundManager: {fileID: 0}
 --- !u!4 &632727692
 Transform:
   m_ObjectHideFlags: 0
@@ -301,9 +309,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMove: {fileID: 530873857}
   turnController: {fileID: 299829452}
-  gridManager: {fileID: 299829450}
-  trapPrefab: {fileID: 322088230173591821, guid: ccfb34c5c3bbeca43a7407f830335dd4, type: 3}
-  selectableTileColor: {r: 0.5, g: 1, b: 0.5, a: 0.5}
+  normalAttack: {fileID: 0}
+  specialAttack: {fileID: 0}
+  setTrap: {fileID: 0}
 --- !u!1 &1055606062
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,6 +606,10 @@ PrefabInstance:
     - target: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7233631590568429455, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7850102976434838014, guid: 8bf93c52897b2ba40808680d9ad6db0f, type: 3}
       propertyPath: m_LocalPosition.x

@@ -7,6 +7,8 @@ public class Archer : BattleEnemy
 {
     protected override int BaseMaxHp => 1;
 
+    private ParticleSystem particle;
+
     protected override Vector2Int[] Dirs { get; } =
     {
         new Vector2Int(2, 1),
@@ -23,6 +25,12 @@ public class Archer : BattleEnemy
         new Vector2Int(1, 2),
     };
 
+    protected override void Awake()
+    {
+        base.Awake();
+        particle = GetComponent<ParticleSystem>();
+    }
+
     public override async Task Attack(Vector2Int playerPos)
     {
         foreach (var d in Dirs)
@@ -38,5 +46,11 @@ public class Archer : BattleEnemy
                 return;
             }
         }
+    }
+
+    protected override void PlayDeathAnimation()
+    {
+        base.PlayDeathAnimation();
+        particle.Play();
     }
 }
